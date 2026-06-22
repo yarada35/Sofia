@@ -1,0 +1,2 @@
+# Sofia
+PROVERB 18:24
