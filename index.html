@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ</title>
+    <title>የኔ መዝሙር (My Mezmur)</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -18,120 +18,78 @@
             min-height: 90vh;
         }
         .container {
-            max-width: 800px; 
-            margin: 0 auto; 
+            max-width: 850px; 
+            width: 100%;
             background: #16161a; 
             padding: 30px; 
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
             border: 1px solid #2a2a35; 
         }
-        h1 { 
-            color: #ff9800; 
-            font-size: 2rem; 
-            margin-bottom: 5px; 
-        }
-        h2 { 
-            font-size: 1.1rem; 
-            color: #8a8a9d; 
-            font-weight: normal; 
-            margin-bottom: 30px; 
-        }
+        h1 { color: #ff9800; font-size: 2rem; margin-bottom: 5px; }
+        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin-bottom: 25px; }
+        
         .controls {
-            margin-bottom: 30px; 
+            margin-bottom: 20px; 
             display: flex; 
             justify-content: center; 
             gap: 15px; 
         }
         .btn {
-            background: #ff9800; 
-            border: none; 
-            padding: 14px 35px; 
-            font-size: 1.1rem;
-            color: #000; 
-            font-weight: bold; 
-            cursor: pointer; 
-            border-radius: 30px;
-            transition: all 0.2s ease; 
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
+            background: #ff9800; border: none; padding: 14px 35px; font-size: 1.1rem;
+            color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
+            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover {
-            background: #ffa726; 
-            transform: translateY(-2px); 
+        .btn:hover { background: #ffa726; transform: translateY(-2px); }
+        .btn-stop { background: #3a3a4a; color: #fff; }
+        
+        .time-display {
+            font-family: monospace; font-size: 1.2rem; color: #00e5ff;
+            margin-bottom: 20px; background: #22222b; display: inline-block;
+            padding: 6px 16px; border-radius: 20px; border: 1px solid #1a8a9d;
         }
-        .btn-stop {
-            background: #3a3a4a;
-            color: #fff;
-        }
-        .btn-stop:hover {
-            background: #4a4a5a;
-        }
-        .status-badge {
-            background: #22222b; 
-            padding: 8px 20px; 
-            border-radius: 20px;
-            font-size: 0.9rem; 
-            color: #00e5ff; 
-            display: inline-block; 
-            margin-bottom: 25px; 
-            border: 1px solid #1a8a9d; 
-        }
-        .section-title { 
-            font-size: 1.3rem; 
-            color: #00e5ff; 
-            margin-top: 20px; 
-            font-weight: bold; 
-        }
+
         .lyric-box {
-            font-size: 2rem; 
-            margin: 20px 0; 
-            min-height: 200px; 
-            display: flex; 
-            flex-wrap: wrap;
-            justify-content: center; 
-            align-content: center;
-            gap: 15px; 
-            padding: 30px; 
-            background: #1a1a24; 
-            border-radius: 12px; 
-            border: 1px solid #23232f; 
-            line-height: 2;
+            margin: 20px 0; display: flex; flex-direction: column; gap: 15px; text-align: left;
         }
-        /* Style for individual words */
-        .word {
-            color: #5a5a6e; 
-            transition: all 0.15s ease; 
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 6px;
-            display: inline-block;
+        
+        .lyric-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px; background: #1a1a24; border-radius: 10px;
+            border: 1px solid #23232f; transition: all 0.25s ease;
         }
-        .word:hover {
-            background: #2a2a35;
-            color: #fff;
+        .verse-text {
+            font-size: 1.5rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
         }
-        /* Glowing amber look when the specific word is being sung */
-        .active-word { 
-            color: #ff9800; 
-            font-weight: bold; 
-            text-shadow: 0 0 12px rgba(255,152,0,0.6); 
-            transform: scale(1.1); 
+        
+        .sync-stamp-btn {
+            background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
+            padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; cursor: pointer;
+            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 140px;
+        }
+        .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
+
+        .active-row { 
+            background: #251f15 !important; border: 1px solid #ff9800 !important;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.15);
+        }
+        .active-row .verse-text { 
+            color: #ff9800 !important; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.4);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
-        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት 6/8 ወለባ መዝሙር</h2>
+        <h1 id="songTitle">የመዝሙሩ ርዕስ (Song Title)</h1>
+        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር ማጫወቻ</h2>
         
         <div class="controls">
-            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
+            <button class="btn" id="playBtn">አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
         
-        <div class="status-badge" id="status">ቃል በቃል ማጫወቻ ዝግጁ ነው (Word Engine Ready)</div>
-        <div class="section-title" id="sectionIndicator">ክፍል፦ ዝግጁ</div>
+        <div class="time-display" id="trackTimer">ሰዓት፦ 0:00</div>
         
         <div class="lyric-box" id="lyricsContainer"></div>
     </div>
@@ -140,140 +98,106 @@
         const audio = new Audio("mezmur.mp3");
         let isPlaying = false;
 
-        // WORD-BY-WORD TIMELINE MAP
-        // 'time' is the exact second that specific word drops in the audio file.
-        const wordTimeline = [
-            // INTRO
-            { text: "(የሙዚቃ", time: 0.0, section: "መግቢያ (INTRO)" },
-            { text: "መግቢያ...)", time: 2.0, section: "መግቢያ (INTRO)" },
-
-            // VERSE 1
-            { text: "የሰበሰብኳቸው…", time: 5.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "በዙሪያዬ", time: 7.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "የነበሩ፤", time: 9.0, section: "ስንኝ 1 (VERSE 1)" },
+        // =========================================================================
+        // ✍️ EDIT THESE LINES BELOW TO MATCH WHAT THE VOCALIST IS ACTUALLY SINGING!
+        // Just replace the Amharic text inside the quotation marks ""
+        // =========================================================================
+        const defaultTimeline = [
+            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (Music Intro) ]" },
             
-            { text: "በቀን", time: 11.0, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "መከራዬ…", time: 12.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ፈጥነው", time: 14.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ተበተኑ።", time: 16.0, section: "ስንኝ 1 (VERSE 1)" },
+            { id: 1, time: 5.0, text: "እዚህ ጋር መጀመሪያ የሚዘመረውን ስንኝ ይጻፉ (Write Verse 1 Here)" },
             
-            { text: "ሰውማ", time: 18.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ምንድነው…", time: 20.0, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ዛሬ", time: 21.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "አጅቦ", time: 22.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ነገ", time: 23.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "የሚጠፋ፤", time: 24.5, section: "ስንኝ 1 (VERSE 1)" },
+            { id: 2, time: 15.0, text: "እዚህ ጋር ሁለተኛውን ስንኝ ይጻፉ (Write Verse 2 Here)" },
             
-            { text: "በምድር", time: 27.0, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ወዳጅ", time: 28.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ላይ…", time: 29.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "የጣለው", time: 31.0, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ልቤ", time: 32.5, section: "ስንኝ 1 (VERSE 1)" },
-            { text: "ተስፋ።", time: 33.5, section: "ስንኝ 1 (VERSE 1)" },
-
-            // CHORUS
-            { text: "ግን", time: 36.0, section: "አዝማች (CHORUS)" },
-            { text: "ከወንድም", time: 37.0, section: "አዝማች (CHORUS)" },
-            { text: "አብልጦ…", time: 38.5, section: "አዝማች (CHORUS)" },
-            { text: "የሚጠጋጋኝ", time: 40.5, section: "አዝማች (CHORUS)" },
-            { text: "አለ፤", time: 42.0, section: "አዝማች (CHORUS)" },
+            { id: 3, time: 25.0, text: "እዚህ ጋር አዝማቹን ይጻፉ (Write Chorus Here)" },
             
-            { text: "በሞት", time: 44.0, section: "አዝማች (CHORUS)" },
-            { text: "ጥላ", time: 45.0, section: "አዝማች (CHORUS)" },
-            { text: "መካከል…", time: 46.2, section: "አዝማች (CHORUS)" },
-            { text: "አብሮኝ", time: 48.0, section: "አዝማች (CHORUS)" },
-            { text: "የቆመ", time: 49.5, section: "አዝማች (CHORUS)" },
-            { text: "ወዳጅ", time: 51.0, section: "አዝማች (CHORUS)" },
-            { text: "አለ!", time: 52.5, section: "አዝማች (CHORUS)" },
+            { id: 4, time: 35.0, text: "እዚህ ጋር ቀጣዩን ስንኝ ይጻፉ (Write Next Verse Here)" },
             
-            { text: "እርሱማ", time: 55.0, section: "አዝማች (CHORUS)" },
-            { text: "ኢየሱስ", time: 56.5, section: "አዝማች (CHORUS)" },
-            { text: "ነው…", time: 58.0, section: "አዝማች (CHORUS)" },
-            { text: "በምንም", time: 59.5, section: "አዝማች (CHORUS)" },
-            { text: "የማይለየኝ፤", time: 61.5, section: "አዝማች (CHORUS)" },
-            
-            { text: "ሰው", time: 64.0, section: "አዝማች (CHORUS)" },
-            { text: "ሁሉ", time: 65.0, section: "አዝማች (CHORUS)" },
-            { text: "ሲተወኝ…", time: 66.2, section: "አዝማች (CHORUS)" },
-            { text: "ደረቱ", time: 68.0, section: "አዝማች (CHORUS)" },
-            { text: "ላይ", time: 69.2, section: "አዝማች (CHORUS)" },
-            { text: "ያቀፈኝ።", time: 70.5, section: "አዝማች (CHORUS)" }
+            { id: 5, time: 45.0, text: "እዚህ ጋር ማሳረጊያውን ይጻፉ (Write Outro/End Here)" }
         ];
 
-        const lyricsContainer = document.getElementById("lyricsContainer");
-        const sectionIndicator = document.getElementById("sectionIndicator");
-        const statusBadge = document.getElementById("status");
+        // This checks if you already recorded custom timestamps in your browser
+        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline")) || defaultTimeline;
 
-        // Generate individual interactive word spans on the dashboard
-        function initializeWordEngine() {
+        const lyricsContainer = document.getElementById("lyricsContainer");
+        const trackTimer = document.getElementById("trackTimer");
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60);
+            let s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function renderInterface() {
             lyricsContainer.innerHTML = "";
-            wordTimeline.forEach((item, index) => {
-                const span = document.createElement("span");
-                span.className = "word";
-                span.id = `word-${index}`;
-                span.innerText = item.text;
+            lyricTimeline.sort((a, b) => a.time - b.time);
+            
+            lyricTimeline.forEach((item) => {
+                const row = document.createElement("div");
+                row.className = "lyric-row";
+                row.id = `row-${item.id}`;
                 
-                // Clicking ANY word makes the audio jump directly to its playback timestamp!
-                span.addEventListener("click", () => {
+                const txtDiv = document.createElement("div");
+                txtDiv.className = "verse-text";
+                txtDiv.innerHTML = item.text;
+                
+                txtDiv.addEventListener("click", () => {
                     audio.currentTime = item.time;
                     if (!isPlaying) playSong();
                 });
 
-                lyricsContainer.appendChild(span);
+                const btn = document.createElement("button");
+                btn.className = "sync-stamp-btn";
+                btn.innerText = `⏱️ ሰዓት መዝግብ (${formatTime(item.time)})`;
+                
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    item.time = audio.currentTime;
+                    localStorage.setItem("sofia_timeline", JSON.stringify(lyricTimeline));
+                    renderInterface();
+                });
+
+                row.appendChild(txtDiv);
+                row.appendChild(btn);
+                lyricsContainer.appendChild(row);
             });
         }
 
-        // Keep updating which specific word lights up as the audio plays
         audio.addEventListener("timeupdate", () => {
             const currentTime = audio.currentTime;
-            let activeIndex = -1;
+            trackTimer.innerText = `ሰዓት፦ ${formatTime(currentTime)}`;
 
-            // Find the current word based on audio progress
-            for (let i = 0; i < wordTimeline.length; i++) {
-                if (currentTime >= wordTimeline[i].time) {
-                    activeIndex = i;
+            let activeId = -1;
+            for (let i = 0; i < lyricTimeline.length; i++) {
+                if (currentTime >= lyricTimeline[i].time) {
+                    activeId = lyricTimeline[i].id;
                 }
             }
 
-            if (activeIndex !== -1) {
-                sectionIndicator.innerText = `ክፍል፦ ${wordTimeline[activeIndex].section}`;
-                
-                document.querySelectorAll(".word").forEach((el, index) => {
-                    if (index === activeIndex) {
-                        el.classList.add("active-word");
-                    } else {
-                        el.classList.remove("active-word");
-                    }
-                });
-            }
+            document.querySelectorAll(".lyric-row").forEach(el => {
+                if (el.id === `row-${activeId}`) {
+                    el.classList.add("active-row");
+                } else {
+                    el.classList.remove("active-row");
+                }
+            });
         });
 
         function playSong() {
-            audio.play().then(() => {
-                isPlaying = true;
-                statusBadge.innerText = "መዝሙሩ እየተጫወተ ነው (ቃል በቃል ማመሳሰል)";
-                statusBadge.style.color = "#ff9800";
-                statusBadge.style.borderColor = "#ff9800";
-            }).catch(error => {
-                statusBadge.innerText = "እባክዎ mezmur.mp3 በካታሎግዎ ውስጥ መኖሩን ያረጋግጡ";
+            audio.play().then(() => { isPlaying = true; }).catch(err => {
+                trackTimer.innerText = "Error: mezmur.mp3 not found";
             });
         }
 
         function stopSong() {
-            audio.pause();
-            audio.currentTime = 0;
-            isPlaying = false;
-            statusBadge.innerText = "የድምፅ ሞገዶች ቆመዋል (Engine Idle)";
-            statusBadge.style.color = "#00e5ff";
-            statusBadge.style.borderColor = "#1a8a9d";
-            sectionIndicator.innerText = "ክፍል፦ ዝግጁ";
-            document.querySelectorAll(".word").forEach(el => el.classList.remove("active-word"));
+            audio.pause(); audio.currentTime = 0; isPlaying = false;
+            document.querySelectorAll(".lyric-row").forEach(el => el.classList.remove("active-row"));
         }
 
         document.getElementById("playBtn").addEventListener("click", playSong);
         document.getElementById("stopBtn").addEventListener("click", stopSong);
-        
-        initializeWordEngine();
+
+        renderInterface();
     </script>
 </body>
 </html>
