@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ</title>
+    <title>የመዝሙር ማመሳሰያ ስቱዲዮ (Lyric Sync Studio)</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -18,7 +18,7 @@
             min-height: 90vh;
         }
         .container {
-            max-width: 850px; 
+            max-width: 900px; 
             width: 100%;
             background: #16161a; 
             padding: 30px; 
@@ -34,26 +34,31 @@
             display: flex; 
             justify-content: center; 
             gap: 15px; 
+            flex-wrap: wrap;
         }
         .btn {
-            background: #ff9800; border: none; padding: 14px 35px; font-size: 1.1rem;
+            background: #ff9800; border: none; padding: 12px 30px; font-size: 1.1rem;
             color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
             transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
         .btn:hover { background: #ffa726; transform: translateY(-2px); }
-        .btn-stop { background: #3a3a4a; color: #fff; }
+        .btn-stop { background: #3a3a4a; color: #fff; box-shadow: none; }
+        .btn-export { background: #00e5ff; color: #000; box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3); }
+        .btn-export:hover { background: #33ecff; }
         
         .time-display {
-            font-family: monospace; font-size: 1.2rem; color: #00e5ff;
+            font-family: monospace; font-size: 1.4rem; color: #00e5ff;
             margin-bottom: 20px; background: #22222b; display: inline-block;
-            padding: 6px 16px; border-radius: 20px; border: 1px solid #1a8a9d;
+            padding: 8px 20px; border-radius: 20px; border: 1px solid #1a8a9d;
+            font-weight: bold;
         }
 
-        .helper-box {
-            background: #1c1c24; border: 1px dashed #ff9800; padding: 14px;
-            border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; color: #ffa726;
-            text-align: left; line-height: 1.5;
+        .instruction-card {
+            background: #1c1c24; border: 1px dashed #ff9800; padding: 15px;
+            border-radius: 10px; margin-bottom: 25px; text-align: left; line-height: 1.6;
         }
+        .instruction-card ol { margin: 5px 0 0 20px; padding: 0; color: #a5a5b5; }
+        .instruction-card li { margin-bottom: 5px; }
 
         .lyric-box {
             margin: 20px 0; display: flex; flex-direction: column; gap: 12px; text-align: left;
@@ -63,81 +68,100 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 18px; background: #1a1a24; border-radius: 10px;
             border: 1px solid #23232f; transition: all 0.25s ease;
+            gap: 15px;
         }
-        .verse-text {
-            font-size: 1.4rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
+        
+        /* Editable Input Text Field Styling */
+        .verse-input {
+            font-size: 1.4rem; color: #f5f5f7; background: transparent;
+            border: none; border-bottom: 1px dashed #444; padding: 5px;
+            flex-grow: 1; font-family: inherit;
+        }
+        .verse-input:focus {
+            color: #ff9800; border-bottom: 2px solid #ff9800; outline: none;
+            background: #222230; border-radius: 4px;
         }
         
         .sync-stamp-btn {
             background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
-            padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; cursor: pointer;
-            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 150px;
+            padding: 8px 14px; font-size: 0.9rem; border-radius: 6px; cursor: pointer;
+            font-family: monospace; font-weight: bold; min-width: 160px;
             transition: all 0.2s;
         }
         .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
 
         .active-row { 
             background: #251f15 !important; border: 1px solid #ff9800 !important;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);
         }
-        .active-row .verse-text { 
-            color: #ff9800 !important; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.4);
+        .active-row .verse-input { 
+            color: #ff9800 !important; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.3);
+        }
+        
+        /* Code Exporter Modal Background */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: #16161a; border: 2px solid #00e5ff; padding: 25px;
+            border-radius: 12px; max-width: 700px; width: 90%; text-align: left;
+        }
+        textarea {
+            width: 100%; height: 300px; background: #0c0c0e; color: #00e5ff;
+            border: 1px solid #2a2a35; border-radius: 6px; padding: 10px;
+            font-family: monospace; font-size: 0.85rem; margin-top: 15px; resize: none;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
-        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት መዝሙር ማጫወቻ</h2>
+        <h1>የመዝሙር ፅሁፍ እና ድምጽ ማመሳሰያ ስቱዲዮ</h1>
+        <h2>የራስዎን ግጥም ይጻፉ እና ከቀጥታ ድምጽዎ ጋር ያገናኙት</h2>
         
         <div class="controls">
             <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
+            <button class="btn btn-export" id="exportBtn">🎯 ያለቀለትን ኮድ አውርድ (EXPORT CODE)</button>
         </div>
         
         <div class="time-display" id="trackTimer">የሙዚቃው ሰዓት፦ 0:00</div>
         
-        <div class="helper-box">
-            💡 <strong>የማመሳሰያ መመሪያ፦</strong> ሙዚቃውን ያስነሱት። ድምፃዊው እያንዳንዱን የደመቀ ስንኝ መዘመር ሲጀምር፣ ከጎኑ ያለውን ሰማያዊ <strong>[⏱️ ሰዓት መዝግብ]</strong> ቁልፍ ልክ በዚያች ቅጽበት ይጫኑት። ድረ-ገጹ ድምጹንና ፅሁፉን አንድ ላይ ያገናኛል!
+        <div class="instruction-card">
+            🛠️ <strong>ይህንን 3 ቀላል እርምጃዎች ይከተሉ፦</strong>
+            <ol>
+                <li><strong>ፅሁፉን ያስተካክሉ፦</strong> ከታች ባሉት ሳጥኖች ውስጥ ያሉትን ፅሁፎች በሙሉ ያጥፉና <u>ድምፃዊው በትክክል የሚለውን ቃላት</u> በግልጽ ይጻፉ።</li>
+                <li><strong>ሰዓቱን ያመሳስሉ፦</strong> ሙዚቃውን <strong>PLAY</strong> ይበሉት። ድምፃዊው የእያንዳንዱን መስመር ቃላት ሲጀምር፣ ከጎኑ ያለውን ሰማያዊ <strong>[⏱️ ሰዓት መዝግብ]</strong> ቁልፍ ይጫኑት።</li>
+                <li><strong>ኮዱን ይውሰዱ፦</strong> ሁሉንም አሰናድተው ሲጨርሱ ሰማያዊውን <strong>🎯 EXPORT CODE</strong> ይጫኑት። የሚመጣውን ኮድ ኮፒ አድርገው GitHub ላይ ይተኩት!</li>
+            </ol>
         </div>
         
         <div class="lyric-box" id="lyricsContainer"></div>
+    </div>
+
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <h3 style="color:#00e5ff; margin-top:0;">🎉 የእርስዎ የተመሳሰለ የድረ-ገጽ ኮድ ዝግጁ ነው!</h3>
+            <p style="color:#8a8a9d; font-size:0.9rem;">ከታች ያለውን ሙሉ ኮድ ኮፒ (Copy) በማድረግ GitHub ላይ ባለው <strong>index.html</strong> ውስጥ ሙሉ በሙሉ ይተኩት (Paste ያድርጉት)። ከዚያ በቋሚነት ይቀመጣል።</p>
+            <textarea id="codeTextArea" readonly></textarea>
+            <button class="btn btn-stop" style="margin-top:15px; width:100%;" id="closeModalBtn">ዝጋ (Close)</button>
+        </div>
     </div>
 
     <script>
         const audio = new Audio("mezmur.mp3");
         let isPlaying = false;
 
-        // REAL AMHARIC LYRICS TIMELINE DATA
-        const defaultTimeline = [
-            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (INTRO) ]" },
-            
-            // VERSE 1
-            { id: 1, time: 6.0, text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤" },
-            { id: 2, time: 11.0, text: "በቀን መከራዬ… ፈጥነው ተበተኑ።" },
-            { id: 3, time: 16.0, text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤" },
-            { id: 4, time: 22.0, text: "በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
-            
-            // CHORUS
-            { id: 5, time: 28.0, text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
-            { id: 6, time: 34.0, text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
-            { id: 7, time: 40.0, text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
-            { id: 8, time: 46.0, text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
-            
-            // VERSE 2
-            { id: 9, time: 54.0, text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤" },
-            { id: 10, time: 60.0, text: "ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
-            { id: 11, time: 66.0, text: "የማይለወጠው… የታመነው የኔ ጌታ፤" },
-            { id: 12, time: 72.0, text: "የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
-            
-            // BRIDGE
-            { id: 13, time: 80.0, text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤" },
-            { id: 14, time: 86.0, text: "እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
-            { id: 15, time: 92.0, text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." }
+        // Editable starting template structure
+        let lyricTimeline = JSON.parse(localStorage.getItem("studio_timeline")) || [
+            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (Music Intro) ]" },
+            { id: 1, time: 5.0, text: "እዚህ ላይ የመጀመሪያውን ስንኝ ቃላት ይጻፉ..." },
+            { id: 2, time: 12.0, text: "እዚህ ላይ ሁለተኛውን ስንኝ ቃላት ይጻፉ..." },
+            { id: 3, time: 20.0, text: "እዚህ ላይ ሶስተኛውን ስንኝ ቃላት ይጻፉ..." },
+            { id: 4, time: 28.0, text: "እዚህ ላይ አዝማቹን ይጻፉ..." },
+            { id: 5, time: 36.0, text: "እዚህ ላይ ቀጣዩን ስንኝ ይጻፉ..." }
         ];
-
-        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline_v2")) || defaultTimeline;
 
         const lyricsContainer = document.getElementById("lyricsContainer");
         const trackTimer = document.getElementById("trackTimer");
@@ -149,7 +173,11 @@
         }
 
         function renderInterface() {
+            // Save state updates locally to avoid reset losses
+            localStorage.setItem("studio_timeline", JSON.stringify(lyricTimeline));
+            
             lyricsContainer.innerHTML = "";
+            // Keep items cleanly sorted by progression timeline positions
             lyricTimeline.sort((a, b) => a.time - b.time);
             
             lyricTimeline.forEach((item) => {
@@ -157,27 +185,28 @@
                 row.className = "lyric-row";
                 row.id = `row-${item.id}`;
                 
-                const txtDiv = document.createElement("div");
-                txtDiv.className = "verse-text";
-                txtDiv.innerHTML = item.text;
+                // Directly inputable textbox design element
+                const input = document.createElement("input");
+                input.className = "verse-input";
+                input.type = "text";
+                input.value = item.text;
                 
-                txtDiv.addEventListener("click", () => {
-                    audio.currentTime = item.time;
-                    if (!isPlaying) playSong();
+                // Tracks when user edits words right on screen
+                input.addEventListener("input", (e) => {
+                    item.text = e.target.value;
+                    localStorage.setItem("studio_timeline", JSON.stringify(lyricTimeline));
                 });
 
                 const btn = document.createElement("button");
                 btn.className = "sync-stamp-btn";
                 btn.innerText = `⏱️ ሰዓት መዝግብ (${formatTime(item.time)})`;
                 
-                btn.addEventListener("click", (e) => {
-                    e.stopPropagation();
+                btn.addEventListener("click", () => {
                     item.time = audio.currentTime;
-                    localStorage.setItem("sofia_timeline_v2", JSON.stringify(lyricTimeline));
                     renderInterface();
                 });
 
-                row.appendChild(txtDiv);
+                row.appendChild(input);
                 row.appendChild(btn);
                 lyricsContainer.appendChild(row);
             });
@@ -205,7 +234,7 @@
 
         function playSong() {
             audio.play().then(() => { isPlaying = true; }).catch(err => {
-                trackTimer.innerText = "ስህተት፦ mezmur.mp3 ፋይል አልተገኘም";
+                trackTimer.innerText = "ስህተት፦ mezmur.mp3 አልተገኘም!";
             });
         }
 
@@ -214,8 +243,72 @@
             document.querySelectorAll(".lyric-row").forEach(el => el.classList.remove("active-row"));
         }
 
+        // Beautifully formats deployment script variations for clean hosting setup rules
+        function generateProductionHTML() {
+            let timelineJSON = JSON.stringify(lyricTimeline, null, 4);
+            return `<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>የተመሳሰለ መዝሙር</title>
+    <style>
+        body { font-family: sans-serif; background: #0c0c0e; color: #f5f5f7; text-align: center; padding: 40px 20px; }
+        .container { max-width: 750px; margin: 0 auto; background: #16161a; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; }
+        h1 { color: #ff9800; }
+        .btn { background: #ff9800; border: none; padding: 14px 35px; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 30px; margin: 10px; }
+        .btn-stop { background: #3a3a4a; color: #fff; }
+        .lyric-box { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
+        .line { font-size: 1.6rem; color: #5a5a6e; transition: all 0.3s; padding: 8px; }
+        .active-line { color: #ff9800; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.5); transform: scale(1.03); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>የተመሳሰለ መዝሙር ማጫወቻ</h1>
+        <button class="btn" onclick="audio.play()">PLAY</button>
+        <button class="btn btn-stop" onclick="audio.pause(); audio.currentTime=0;">STOP</button>
+        <div class="lyric-box" id="lyrics"></div>
+    </div>
+    <script>
+        const audio = new Audio("mezmur.mp3");
+        const timeline = ${timelineJSON};
+        const box = document.getElementById("lyrics");
+        
+        timeline.forEach((item, idx) => {
+            const div = document.createElement("div");
+            div.className = "line";
+            div.id = "line-" + idx;
+            div.innerText = item.text;
+            box.appendChild(div);
+        });
+
+        audio.addEventListener("timeupdate", () => {
+            let activeIdx = 0;
+            for(let i=0; i<timeline.length; i++) {
+                if(audio.currentTime >= timeline[i].time) activeIdx = i;
+            }
+            document.querySelectorAll(".line").forEach((el, idx) => {
+                if(idx === activeIdx) el.classList.add("active-line");
+                else el.classList.remove("active-line");
+            });
+        });
+    <\/script>
+</body>
+</html>`;
+        }
+
         document.getElementById("playBtn").addEventListener("click", playSong);
         document.getElementById("stopBtn").addEventListener("click", stopSong);
+        
+        document.getElementById("exportBtn").addEventListener("click", () => {
+            document.getElementById("codeTextArea").value = generateProductionHTML();
+            document.getElementById("codeModal").style.display = "flex";
+        });
+        
+        document.getElementById("closeModalBtn").addEventListener("click", () => {
+            document.getElementById("codeModal").style.display = "none";
+        });
 
         renderInterface();
     </script>
