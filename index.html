@@ -74,24 +74,23 @@
             padding: 8px 20px; 
             border-radius: 20px;
             font-size: 0.9rem; 
-            color: #00e676; 
+            color: #00e5ff; 
             display: inline-block; 
             margin-bottom: 25px; 
-            border: 1px solid #2e7d32; 
+            border: 1px solid #1a8a9d; 
         }
         .section-title { 
             font-size: 1.3rem; 
             color: #00e5ff; 
             margin-top: 20px; 
             font-weight: bold; 
-            letter-spacing: 1px; 
         }
         .lyric-box {
             font-size: 1.8rem; 
             margin: 20px 0; 
             min-height: 140px; 
             display: flex; 
-            flex-wrap: wrap; 
+            flex-direction: column;
             justify-content: center; 
             align-content: center;
             gap: 12px; 
@@ -99,20 +98,18 @@
             background: #1a1a24; 
             border-radius: 12px; 
             border: 1px solid #23232f; 
-            line-height: 1.6;
+            line-height: 1.8;
         }
         .phrase {
             color: #5a5a6e; 
-            transition: all 0.25s ease; 
+            transition: all 0.3s ease; 
             cursor: default;
-            width: 100%;
-            margin-bottom: 8px;
         }
         .active-phrase { 
             color: #ff9800; 
             font-weight: bold; 
             text-shadow: 0 0 15px rgba(255,152,0,0.6); 
-            transform: scale(1.03); 
+            transform: scale(1.02); 
         }
     </style>
 </head>
@@ -127,191 +124,115 @@
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
         
-        <div class="status-badge" id="status">የድምፅ ሞገዶች ዝግጁ ናቸው (Engine Idle)</div>
-        <div class="section-title" id="sectionIndicator">ክፍል፦ መግቢያ (INTRO)</div>
+        <div class="status-badge" id="status">የድምፅ ማጫወቻ ዝግጁ ነው (Audio Ready)</div>
+        <div class="section-title" id="sectionIndicator">ክፍል፦ ዝግጁ</div>
         
         <div class="lyric-box" id="lyricsContainer"></div>
     </div>
 
     <script>
-        let audioCtx = null;
+        // Create a real audio element pointed directly at your uploaded repository file
+        const audio = new Audio("mezmur.mp3");
         let isPlaying = false;
-        let playbackTimeouts = [];
-        let activeVocalAudio = null;
 
-        const songArrangement = {
-            bpm: 65,
-            timeline: [
-                { id: "intro", label: "መግቢያ (INTRO)", style: "ambient" },
-                { id: "verse1", label: "ስንኝ 1 (VERSE 1) — ብቸኝነት እና የሰው መክዳት", style: "soft" },
-                { id: "chorus1", label: "አዝማች (CHORUS) — የክርስቶስ ከወንድም በላይ መሆን", style: "full" },
-                { id: "verse2", label: "ስንኝ 2 (VERSE 2) — የታማኝነት ጥልቀት", style: "soft" },
-                { id: "bridge", label: "ማሰሪያ (BRIDGE) — የቃል ኪዳን ጥንካሬ", style: "fast" },
-                { id: "chorus2", label: "አዝማች (CHORUS)", style: "full" },
-                { id: "outro", label: "ማሳረጊያ (OUTRO)", style: "ambient" }
-            ],
-            lyrics: {
-                intro: [{ text: "(የባህላዊ የትዝታ ዋሽንት እና ለስላሳ ፒያኖ አርፔጆ ብቻ)", duration: 5.5, chord: "C", pitch: 60, voiceKey: null }],
-                verse1: [
-                    { text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤", duration: 5.0, chord: "C", pitch: 64, voiceKey: "testVoice" },
-                    { text: "በቀን መከራዬ… ፈጥነው ተበተኑ።", duration: 5.0, chord: "Am", pitch: 62, voiceKey: "testVoice" },
-                    { text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤", duration: 5.0, chord: "F", pitch: 60, voiceKey: "testVoice" },
-                    { text: "በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ।", duration: 5.0, chord: "G", pitch: 59, voiceKey: "testVoice" }
-                ],
-                chorus1: [
-                    { text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤", duration: 5.0, chord: "C", pitch: 64, voiceKey: "testVoice" },
-                    { text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!", duration: 5.0, chord: "E", pitch: 67, voiceKey: "testVoice" },
-                    { text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤", duration: 5.0, chord: "F", pitch: 69, voiceKey: "testVoice" },
-                    { text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።", duration: 5.5, chord: "G", pitch: 67, voiceKey: "testVoice" }
-                ],
-                verse2: [
-                    { text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤", duration: 5.0, chord: "C", pitch: 64, voiceKey: "testVoice" },
-                    { text: "ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።", duration: 5.0, chord: "Am", pitch: 62, voiceKey: "testVoice" },
-                    { text: "የማይለወጠው… የታመነው የኔ ጌታ፤", duration: 5.0, chord: "F", pitch: 60, voiceKey: "testVoice" },
-                    { text: "የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።", duration: 5.5, chord: "G", pitch: 59, voiceKey: "testVoice" }
-                ],
-                bridge: [
-                    { text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤", duration: 4.0, chord: "Am", pitch: 69, voiceKey: "testVoice" },
-                    { text: "እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!", duration: 4.0, chord: "F", pitch: 65, voiceKey: "testVoice" },
-                    { text: "ወዳጄ… የነፍሴ...", duration: 3.5, chord: "G", pitch: 67, voiceKey: "testVoice" },
-                    { text: "ኢየሱስ… ህይወቴ...", duration: 4.0, chord: "C", pitch: 64, voiceKey: "testVoice" }
-                ],
-                chorus2: [
-                    { text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤", duration: 5.0, chord: "C", pitch: 64, voiceKey: "testVoice" },
-                    { text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!", duration: 5.0, chord: "E", pitch: 67, voiceKey: "testVoice" },
-                    { text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤", duration: 5.0, chord: "F", pitch: 69, voiceKey: "testVoice" },
-                    { text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።", duration: 5.5, chord: "G", pitch: 67, voiceKey: "testVoice" }
-                ],
-                outro: [{ text: "(ከበሮው ይቆማል፤ የዋሽንትና የፒያኖ የመጨረሻ ረዥም ኖት ቀስ እያለ ይጠፋል)", duration: 6.0, chord: "C", pitch: 60, voiceKey: null }]
-            }
-        };
-
-        // Universal MP3 format that works seamlessly on iOS, Android, Mac, and Windows
-        const vocalTracks = {
-            "testVoice": "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.mp3"
-        };
-
-        const CHORD_MAP = { 'C': [48, 52, 55], 'Am': [45, 48, 52], 'F': [41, 45, 48], 'G': [43, 47, 50], 'E': [40, 44, 47] };
-        function midiToFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
-
-        function playHumanVoiceTrack(voiceKey) {
-            if (activeVocalAudio) { activeVocalAudio.pause(); activeVocalAudio = null; }
-            if (!voiceKey || !vocalTracks[voiceKey]) return;
-            activeVocalAudio = new Audio(vocalTracks[voiceKey]);
-            activeVocalAudio.volume = 1.0;
-            activeVocalAudio.play().catch(err => console.log("Audio pipeline status:", err));
-        }
-
-        function playPianoArpeggio(ctx, time, notes) {
-            notes.forEach((note, index) => {
-                let osc = ctx.createOscillator(); let gain = ctx.createGain(); osc.type = 'triangle';
-                osc.frequency.setValueAtTime(midiToFreq(note + 12), time + (index * 0.15));
-                gain.gain.setValueAtTime(0, time + (index * 0.15));
-                gain.gain.linearRampToValueAtTime(0.07, time + (index * 0.15) + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + (index * 0.15) + 0.8);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(time + (index * 0.15)); osc.stop(time + (index * 0.15) + 0.8);
-            });
-        }
-
-        function playWashintSolo(ctx, time, baseNote, duration) {
-            let osc = ctx.createOscillator(); let gain = ctx.createGain(); osc.type = 'sine';
-            osc.frequency.setValueAtTime(midiToFreq(baseNote + 12), time);
-            gain.gain.setValueAtTime(0, time); gain.gain.linearRampToValueAtTime(0.06, time + 0.2);
-            gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(time); osc.stop(time + duration);
-        }
-
-        function playWolebaDrumBeat(ctx, time, type) {
-            let osc = ctx.createOscillator(); let gain = ctx.createGain();
-            if (type === 'kick') {
-                osc.frequency.setValueAtTime(110, time); osc.frequency.exponentialRampToValueAtTime(45, time + 0.12);
-                gain.gain.setValueAtTime(0.25, time); gain.gain.exponentialRampToValueAtTime(0.001, time + 0.14);
-            } else {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(200, time);
-                gain.gain.setValueAtTime(0.12, time); gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
-            }
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(time); osc.stop(time + 0.17);
-        }
-
-        function renderSectionLyrics(sectionId) {
-            const container = document.getElementById("lyricsContainer");
-            container.innerHTML = "";
-            songArrangement.lyrics[sectionId].forEach((phraseData, index) => {
-                let span = document.createElement("span"); span.className = "phrase";
-                span.id = `phrase-${index}`; span.innerText = phraseData.text;
-                container.appendChild(span);
-            });
-        }
-
-        function startSongEngine() {
-            if (isPlaying) return;
-            isPlaying = true;
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            document.getElementById("status").innerText = "እውነተኛ የሰው ድምፅ ማጫወቻ ዝግጁ ነው (MP3 Audio Pipeline Engine Active)";
-            document.getElementById("status").style.color = "#00e5ff";
+        // Perfect timestamp mapping for the full song (In seconds)
+        // You can change these numbers to match up perfectly with the singing!
+        const lyricTimeline = [
+            { time: 0, section: "መግቢያ (INTRO)", text: "(የሙዚቃ መግቢያ...)" },
+            { time: 5.5, section: "ስንኝ 1 (VERSE 1)", text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤" },
+            { time: 10.5, section: "ስንኝ 1 (VERSE 1)", text: "በቀን መከራዬ… ፈጥነው ተበተኑ።" },
+            { time: 15.5, section: "ስንኝ 1 (VERSE 1)", text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤" },
+            { time: 20.5, section: "ስንኝ 1 (VERSE 1)", text: "በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
             
-            let currentScheduleTime = audioCtx.currentTime + 0.3;
-            let accumulatedDelayMs = 300; 
+            { time: 25.5, section: "አዝማች (CHORUS)", text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
+            { time: 30.5, section: "አዝማች (CHORUS)", text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
+            { time: 35.5, section: "አዝማች (CHORUS)", text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
+            { time: 40.5, section: "አዝማች (CHORUS)", text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
+            
+            { time: 46.0, section: "ስንኝ 2 (VERSE 2)", text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤" },
+            { time: 51.0, section: "ስንኝ 2 (VERSE 2)", text: "ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
+            { time: 56.0, section: "ስንኝ 2 (VERSE 2)", text: "የማይለወጠው… የታመነው የኔ ጌታ፤" },
+            { time: 61.0, section: "ስንኝ 2 (VERSE 2)", text: "የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
+            
+            { time: 66.5, section: "ማሰሪያ (BRIDGE)", text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤" },
+            { time: 70.5, section: "ማሰሪያ (BRIDGE)", text: "እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
+            { time: 74.5, section: "ማሰሪያ (BRIDGE)", text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." },
+            
+            { time: 78.5, section: "አዝማች (CHORUS)", text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
+            { time: 83.5, section: "አዝማች (CHORUS)", text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
+            { time: 88.5, section: "አዝማች (CHORUS)", text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
+            { time: 93.5, section: "አዝማች (CHORUS)", text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
+            { time: 99.0, section: "ማሳረጊያ (OUTRO)", text: "(የመጨረሻ የሙዚቃ ክፍል...)" }
+        ];
 
-            songArrangement.timeline.forEach((section) => {
-                const lines = songArrangement.lyrics[section.id];
-                lines.forEach((line, index) => {
-                    let lineDuration = line.duration;
-                    let currentChordNotes = CHORD_MAP[line.chord] || [48, 52, 55];
+        const lyricsContainer = document.getElementById("lyricsContainer");
+        const sectionIndicator = document.getElementById("sectionIndicator");
+        const statusBadge = document.getElementById("status");
 
-                    if (section.style === "ambient" || section.style === "soft" || section.style === "full") {
-                        playPianoArpeggio(audioCtx, currentScheduleTime, currentChordNotes);
-                    }
-                    if (section.style === "ambient" || section.id === "outro") {
-                        playWashintSolo(audioCtx, currentScheduleTime, line.pitch, lineDuration);
-                    }
-                    if (section.style === "full" || section.style === "fast") {
-                        let beatSpeed = section.style === "fast" ? 0.23 : 0.33; 
-                        for (let b = 0; b < lineDuration; b += beatSpeed * 6) {
-                            playWolebaDrumBeat(audioCtx, currentScheduleTime + b, 'kick');
-                            playWolebaDrumBeat(audioCtx, currentScheduleTime + b + (beatSpeed * 3), 'snare');
-                        }
-                    }
-
-                    let targetScheduleTimeMs = accumulatedDelayMs;
-                    let t1 = setTimeout(() => {
-                        document.getElementById("sectionIndicator").innerText = section.label;
-                        if (index === 0) renderSectionLyrics(section.id);
-                        document.querySelectorAll(".phrase").forEach(el => el.classList.remove("active-phrase"));
-                        let currentLineNode = document.getElementById(`phrase-${index}`);
-                        if (currentLineNode) currentLineNode.classList.add("active-phrase");
-                        if (line.voiceKey) playHumanVoiceTrack(line.voiceKey);
-                    }, targetScheduleTimeMs);
-
-                    playbackTimeouts.push(t1);
-                    currentScheduleTime += lineDuration;
-                    accumulatedDelayMs += lineDuration * 1000;
-                });
+        // Build the lyric elements on screen
+        function initializeLyrics() {
+            lyricsContainer.innerHTML = "";
+            lyricTimeline.forEach((item, index) => {
+                const span = document.createElement("div");
+                span.className = "phrase";
+                span.id = `line-${index}`;
+                span.innerText = item.text;
+                lyricsContainer.appendChild(span);
             });
-
-            let finalTimeout = setTimeout(stopSongEngine, accumulatedDelayMs);
-            playbackTimeouts.push(finalTimeout);
         }
 
-        function stopSongEngine() {
-            isPlaying = false;
-            playbackTimeouts.forEach(t => clearTimeout(t)); playbackTimeouts = [];
-            if (activeVocalAudio) { activeVocalAudio.pause(); activeVocalAudio = null; }
-            if (audioCtx) { audioCtx.close(); audioCtx = null; }
-            document.getElementById("status").innerText = "የድምፅ ሞገዶች ቆመዋል (Engine Idle)";
-            document.getElementById("status").style.color = "#00e676";
-            document.getElementById("sectionIndicator").innerText = "ክፍል፦ መግቢያ (INTRO)";
-            document.getElementById("lyricsContainer").innerHTML = `<span style="color: #666;">መዝሙሩን ለማጫወት PLAY የሚለውን ይጫኑ...</span>`;
-        }
+        // Keep updating screen values as the song naturally plays forward
+        audio.addEventListener("timeupdate", () => {
+            const currentTime = audio.currentTime;
+            let activeIndex = 0;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("lyricsContainer").innerHTML = `<span style="color: #666;">መዝሙሩን ለማጫወት PLAY የሚለውን ይጫኑ...</span>`;
-            document.getElementById("playBtn").addEventListener("click", startSongEngine);
-            document.getElementById("stopBtn").addEventListener("click", stopSongEngine);
+            for (let i = 0; i < lyricTimeline.length; i++) {
+                if (currentTime >= lyricTimeline[i].time) {
+                    activeIndex = i;
+                }
+            }
+
+            // Update UI elements 
+            sectionIndicator.innerText = `ክፍል፦ ${lyricTimeline[activeIndex].section}`;
+            
+            document.querySelectorAll(".phrase").forEach((el, index) => {
+                if (index === activeIndex) {
+                    el.classList.add("active-phrase");
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    el.classList.remove("active-phrase");
+                }
+            });
         });
+
+        function playSong() {
+            audio.play().then(() => {
+                isPlaying = true;
+                statusBadge.innerText = "መዝሙሩ እየተጫወተ ነው (Playing Media File)";
+                statusBadge.style.color = "#ff9800";
+                statusBadge.style.borderColor = "#ff9800";
+            }).catch(error => {
+                console.log("Audio loading notice:", error);
+                statusBadge.innerText = "mezmur.mp3 ን በማንበብ ላይ... እባክዎ ፋይሉን መስቀልዎን ያረጋግጡ";
+            });
+        }
+
+        function stopSong() {
+            audio.pause();
+            audio.currentTime = 0;
+            isPlaying = false;
+            statusBadge.innerText = "የድምፅ ሞገዶች ቆመዋል (Engine Idle)";
+            statusBadge.style.color = "#00e5ff";
+            statusBadge.style.borderColor = "#1a8a9d";
+            sectionIndicator.innerText = "ክፍል፦ ዝግጁ";
+            document.querySelectorAll(".phrase").forEach(el => el.classList.remove("active-phrase"));
+        }
+
+        document.getElementById("playBtn").addEventListener("click", playSong);
+        document.getElementById("stopBtn").addEventListener("click", stopSong);
+        
+        // Run immediately on page load
+        initializeLyrics();
     </script>
 </body>
 </html>
