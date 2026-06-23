@@ -58,16 +58,13 @@
         .btn:hover {
             background: #ffa726; 
             transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4); 
         }
         .btn-stop {
             background: #3a3a4a;
             color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .btn-stop:hover {
             background: #4a4a5a;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
         .status-badge {
             background: #22222b; 
@@ -86,30 +83,39 @@
             font-weight: bold; 
         }
         .lyric-box {
-            font-size: 1.8rem; 
+            font-size: 2rem; 
             margin: 20px 0; 
-            min-height: 140px; 
+            min-height: 200px; 
             display: flex; 
-            flex-direction: column;
+            flex-wrap: wrap;
             justify-content: center; 
             align-content: center;
-            gap: 12px; 
-            padding: 25px; 
+            gap: 15px; 
+            padding: 30px; 
             background: #1a1a24; 
             border-radius: 12px; 
             border: 1px solid #23232f; 
-            line-height: 1.8;
+            line-height: 2;
         }
-        .phrase {
+        /* Style for individual words */
+        .word {
             color: #5a5a6e; 
-            transition: all 0.3s ease; 
-            cursor: default;
+            transition: all 0.15s ease; 
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+            display: inline-block;
         }
-        .active-phrase { 
+        .word:hover {
+            background: #2a2a35;
+            color: #fff;
+        }
+        /* Glowing amber look when the specific word is being sung */
+        .active-word { 
             color: #ff9800; 
             font-weight: bold; 
-            text-shadow: 0 0 15px rgba(255,152,0,0.6); 
-            transform: scale(1.02); 
+            text-shadow: 0 0 12px rgba(255,152,0,0.6); 
+            transform: scale(1.1); 
         }
     </style>
 </head>
@@ -124,96 +130,132 @@
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
         
-        <div class="status-badge" id="status">የድምፅ ማጫወቻ ዝግጁ ነው (Audio Ready)</div>
+        <div class="status-badge" id="status">ቃል በቃል ማጫወቻ ዝግጁ ነው (Word Engine Ready)</div>
         <div class="section-title" id="sectionIndicator">ክፍል፦ ዝግጁ</div>
         
         <div class="lyric-box" id="lyricsContainer"></div>
     </div>
 
     <script>
-        // Create a real audio element pointed directly at your uploaded repository file
         const audio = new Audio("mezmur.mp3");
         let isPlaying = false;
 
-        // Perfect timestamp mapping for the full song (In seconds)
-        // You can change these numbers to match up perfectly with the singing!
-        const lyricTimeline = [
-            { time: 0, section: "መግቢያ (INTRO)", text: "(የሙዚቃ መግቢያ...)" },
-            { time: 5.5, section: "ስንኝ 1 (VERSE 1)", text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤" },
-            { time: 10.5, section: "ስንኝ 1 (VERSE 1)", text: "በቀን መከራዬ… ፈጥነው ተበተኑ።" },
-            { time: 15.5, section: "ስንኝ 1 (VERSE 1)", text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤" },
-            { time: 20.5, section: "ስንኝ 1 (VERSE 1)", text: "በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
+        // WORD-BY-WORD TIMELINE MAP
+        // 'time' is the exact second that specific word drops in the audio file.
+        const wordTimeline = [
+            // INTRO
+            { text: "(የሙዚቃ", time: 0.0, section: "መግቢያ (INTRO)" },
+            { text: "መግቢያ...)", time: 2.0, section: "መግቢያ (INTRO)" },
+
+            // VERSE 1
+            { text: "የሰበሰብኳቸው…", time: 5.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "በዙሪያዬ", time: 7.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የነበሩ፤", time: 9.0, section: "ስንኝ 1 (VERSE 1)" },
             
-            { time: 25.5, section: "አዝማች (CHORUS)", text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
-            { time: 30.5, section: "አዝማች (CHORUS)", text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
-            { time: 35.5, section: "አዝማች (CHORUS)", text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
-            { time: 40.5, section: "አዝማች (CHORUS)", text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
+            { text: "በቀን", time: 11.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "መከራዬ…", time: 12.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ፈጥነው", time: 14.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ተበተኑ።", time: 16.0, section: "ስንኝ 1 (VERSE 1)" },
             
-            { time: 46.0, section: "ስንኝ 2 (VERSE 2)", text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤" },
-            { time: 51.0, section: "ስንኝ 2 (VERSE 2)", text: "ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
-            { time: 56.0, section: "ስንኝ 2 (VERSE 2)", text: "የማይለወጠው… የታመነው የኔ ጌታ፤" },
-            { time: 61.0, section: "ስንኝ 2 (VERSE 2)", text: "የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
+            { text: "ሰውማ", time: 18.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ምንድነው…", time: 20.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ዛሬ", time: 21.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "አጅቦ", time: 22.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ነገ", time: 23.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የሚጠፋ፤", time: 24.5, section: "ስንኝ 1 (VERSE 1)" },
             
-            { time: 66.5, section: "ማሰሪያ (BRIDGE)", text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤" },
-            { time: 70.5, section: "ማሰሪያ (BRIDGE)", text: "እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
-            { time: 74.5, section: "ማሰሪያ (BRIDGE)", text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." },
+            { text: "በምድር", time: 27.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ወዳጅ", time: 28.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ላይ…", time: 29.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የጣለው", time: 31.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ልቤ", time: 32.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ተስፋ።", time: 33.5, section: "ስንኝ 1 (VERSE 1)" },
+
+            // CHORUS
+            { text: "ግን", time: 36.0, section: "አዝማች (CHORUS)" },
+            { text: "ከወንድም", time: 37.0, section: "አዝማች (CHORUS)" },
+            { text: "አብልጦ…", time: 38.5, section: "አዝማች (CHORUS)" },
+            { text: "የሚጠጋጋኝ", time: 40.5, section: "አዝማች (CHORUS)" },
+            { text: "አለ፤", time: 42.0, section: "አዝማች (CHORUS)" },
             
-            { time: 78.5, section: "አዝማች (CHORUS)", text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
-            { time: 83.5, section: "አዝማች (CHORUS)", text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
-            { time: 88.5, section: "አዝማች (CHORUS)", text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
-            { time: 93.5, section: "አዝማች (CHORUS)", text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
-            { time: 99.0, section: "ማሳረጊያ (OUTRO)", text: "(የመጨረሻ የሙዚቃ ክፍል...)" }
+            { text: "በሞት", time: 44.0, section: "አዝማች (CHORUS)" },
+            { text: "ጥላ", time: 45.0, section: "አዝማች (CHORUS)" },
+            { text: "መካከል…", time: 46.2, section: "አዝማች (CHORUS)" },
+            { text: "አብሮኝ", time: 48.0, section: "አዝማች (CHORUS)" },
+            { text: "የቆመ", time: 49.5, section: "አዝማች (CHORUS)" },
+            { text: "ወዳጅ", time: 51.0, section: "አዝማች (CHORUS)" },
+            { text: "አለ!", time: 52.5, section: "አዝማች (CHORUS)" },
+            
+            { text: "እርሱማ", time: 55.0, section: "አዝማች (CHORUS)" },
+            { text: "ኢየሱስ", time: 56.5, section: "አዝማች (CHORUS)" },
+            { text: "ነው…", time: 58.0, section: "አዝማች (CHORUS)" },
+            { text: "በምንም", time: 59.5, section: "አዝማች (CHORUS)" },
+            { text: "የማይለየኝ፤", time: 61.5, section: "አዝማች (CHORUS)" },
+            
+            { text: "ሰው", time: 64.0, section: "አዝማች (CHORUS)" },
+            { text: "ሁሉ", time: 65.0, section: "አዝማች (CHORUS)" },
+            { text: "ሲተወኝ…", time: 66.2, section: "አዝማች (CHORUS)" },
+            { text: "ደረቱ", time: 68.0, section: "አዝማች (CHORUS)" },
+            { text: "ላይ", time: 69.2, section: "አዝማች (CHORUS)" },
+            { text: "ያቀፈኝ።", time: 70.5, section: "አዝማች (CHORUS)" }
         ];
 
         const lyricsContainer = document.getElementById("lyricsContainer");
         const sectionIndicator = document.getElementById("sectionIndicator");
         const statusBadge = document.getElementById("status");
 
-        // Build the lyric elements on screen
-        function initializeLyrics() {
+        // Generate individual interactive word spans on the dashboard
+        function initializeWordEngine() {
             lyricsContainer.innerHTML = "";
-            lyricTimeline.forEach((item, index) => {
-                const span = document.createElement("div");
-                span.className = "phrase";
-                span.id = `line-${index}`;
+            wordTimeline.forEach((item, index) => {
+                const span = document.createElement("span");
+                span.className = "word";
+                span.id = `word-${index}`;
                 span.innerText = item.text;
+                
+                // Clicking ANY word makes the audio jump directly to its playback timestamp!
+                span.addEventListener("click", () => {
+                    audio.currentTime = item.time;
+                    if (!isPlaying) playSong();
+                });
+
                 lyricsContainer.appendChild(span);
             });
         }
 
-        // Keep updating screen values as the song naturally plays forward
+        // Keep updating which specific word lights up as the audio plays
         audio.addEventListener("timeupdate", () => {
             const currentTime = audio.currentTime;
-            let activeIndex = 0;
+            let activeIndex = -1;
 
-            for (let i = 0; i < lyricTimeline.length; i++) {
-                if (currentTime >= lyricTimeline[i].time) {
+            // Find the current word based on audio progress
+            for (let i = 0; i < wordTimeline.length; i++) {
+                if (currentTime >= wordTimeline[i].time) {
                     activeIndex = i;
                 }
             }
 
-            // Update UI elements 
-            sectionIndicator.innerText = `ክፍል፦ ${lyricTimeline[activeIndex].section}`;
-            
-            document.querySelectorAll(".phrase").forEach((el, index) => {
-                if (index === activeIndex) {
-                    el.classList.add("active-phrase");
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    el.classList.remove("active-phrase");
-                }
-            });
+            if (activeIndex !== -1) {
+                sectionIndicator.innerText = `ክፍል፦ ${wordTimeline[activeIndex].section}`;
+                
+                document.querySelectorAll(".word").forEach((el, index) => {
+                    if (index === activeIndex) {
+                        el.classList.add("active-word");
+                    } else {
+                        el.classList.remove("active-word");
+                    }
+                });
+            }
         });
 
         function playSong() {
             audio.play().then(() => {
                 isPlaying = true;
-                statusBadge.innerText = "መዝሙሩ እየተጫወተ ነው (Playing Media File)";
+                statusBadge.innerText = "መዝሙሩ እየተጫወተ ነው (ቃል በቃል ማመሳሰል)";
                 statusBadge.style.color = "#ff9800";
                 statusBadge.style.borderColor = "#ff9800";
             }).catch(error => {
-                console.log("Audio loading notice:", error);
-                statusBadge.innerText = "mezmur.mp3 ን በማንበብ ላይ... እባክዎ ፋይሉን መስቀልዎን ያረጋግጡ";
+                statusBadge.innerText = "እባክዎ mezmur.mp3 በካታሎግዎ ውስጥ መኖሩን ያረጋግጡ";
             });
         }
 
@@ -225,14 +267,13 @@
             statusBadge.style.color = "#00e5ff";
             statusBadge.style.borderColor = "#1a8a9d";
             sectionIndicator.innerText = "ክፍል፦ ዝግጁ";
-            document.querySelectorAll(".phrase").forEach(el => el.classList.remove("active-phrase"));
+            document.querySelectorAll(".word").forEach(el => el.classList.remove("active-word"));
         }
 
         document.getElementById("playBtn").addEventListener("click", playSong);
         document.getElementById("stopBtn").addEventListener("click", stopSong);
         
-        // Run immediately on page load
-        initializeLyrics();
+        initializeWordEngine();
     </script>
 </body>
 </html>
