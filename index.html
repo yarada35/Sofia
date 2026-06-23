@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>የኔ መዝሙር (My Mezmur)</title>
+    <title>ከወንድም በላይ</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -49,8 +49,14 @@
             padding: 6px 16px; border-radius: 20px; border: 1px solid #1a8a9d;
         }
 
+        .helper-box {
+            background: #1c1c24; border: 1px dashed #ff9800; padding: 14px;
+            border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; color: #ffa726;
+            text-align: left; line-height: 1.5;
+        }
+
         .lyric-box {
-            margin: 20px 0; display: flex; flex-direction: column; gap: 15px; text-align: left;
+            margin: 20px 0; display: flex; flex-direction: column; gap: 12px; text-align: left;
         }
         
         .lyric-row {
@@ -59,13 +65,14 @@
             border: 1px solid #23232f; transition: all 0.25s ease;
         }
         .verse-text {
-            font-size: 1.5rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
+            font-size: 1.4rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
         }
         
         .sync-stamp-btn {
             background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
             padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; cursor: pointer;
-            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 140px;
+            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 150px;
+            transition: all 0.2s;
         }
         .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
 
@@ -81,15 +88,19 @@
 <body>
 
     <div class="container">
-        <h1 id="songTitle">የመዝሙሩ ርዕስ (Song Title)</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር ማጫወቻ</h2>
+        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
+        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት መዝሙር ማጫወቻ</h2>
         
         <div class="controls">
-            <button class="btn" id="playBtn">አጫውት (PLAY)</button>
+            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
         
-        <div class="time-display" id="trackTimer">ሰዓት፦ 0:00</div>
+        <div class="time-display" id="trackTimer">የሙዚቃው ሰዓት፦ 0:00</div>
+        
+        <div class="helper-box">
+            💡 <strong>የማመሳሰያ መመሪያ፦</strong> ሙዚቃውን ያስነሱት። ድምፃዊው እያንዳንዱን የደመቀ ስንኝ መዘመር ሲጀምር፣ ከጎኑ ያለውን ሰማያዊ <strong>[⏱️ ሰዓት መዝግብ]</strong> ቁልፍ ልክ በዚያች ቅጽበት ይጫኑት። ድረ-ገጹ ድምጹንና ፅሁፉን አንድ ላይ ያገናኛል!
+        </div>
         
         <div class="lyric-box" id="lyricsContainer"></div>
     </div>
@@ -98,26 +109,35 @@
         const audio = new Audio("mezmur.mp3");
         let isPlaying = false;
 
-        // =========================================================================
-        // ✍️ EDIT THESE LINES BELOW TO MATCH WHAT THE VOCALIST IS ACTUALLY SINGING!
-        // Just replace the Amharic text inside the quotation marks ""
-        // =========================================================================
+        // REAL AMHARIC LYRICS TIMELINE DATA
         const defaultTimeline = [
-            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (Music Intro) ]" },
+            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (INTRO) ]" },
             
-            { id: 1, time: 5.0, text: "እዚህ ጋር መጀመሪያ የሚዘመረውን ስንኝ ይጻፉ (Write Verse 1 Here)" },
+            // VERSE 1
+            { id: 1, time: 6.0, text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤" },
+            { id: 2, time: 11.0, text: "በቀን መከራዬ… ፈጥነው ተበተኑ።" },
+            { id: 3, time: 16.0, text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤" },
+            { id: 4, time: 22.0, text: "በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
             
-            { id: 2, time: 15.0, text: "እዚህ ጋር ሁለተኛውን ስንኝ ይጻፉ (Write Verse 2 Here)" },
+            // CHORUS
+            { id: 5, time: 28.0, text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤" },
+            { id: 6, time: 34.0, text: "በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
+            { id: 7, time: 40.0, text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤" },
+            { id: 8, time: 46.0, text: "ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
             
-            { id: 3, time: 25.0, text: "እዚህ ጋር አዝማቹን ይጻፉ (Write Chorus Here)" },
+            // VERSE 2
+            { id: 9, time: 54.0, text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤" },
+            { id: 10, time: 60.0, text: "ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
+            { id: 11, time: 66.0, text: "የማይለወጠው… የታመነው የኔ ጌታ፤" },
+            { id: 12, time: 72.0, text: "የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
             
-            { id: 4, time: 35.0, text: "እዚህ ጋር ቀጣዩን ስንኝ ይጻፉ (Write Next Verse Here)" },
-            
-            { id: 5, time: 45.0, text: "እዚህ ጋር ማሳረጊያውን ይጻፉ (Write Outro/End Here)" }
+            // BRIDGE
+            { id: 13, time: 80.0, text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤" },
+            { id: 14, time: 86.0, text: "እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
+            { id: 15, time: 92.0, text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." }
         ];
 
-        // This checks if you already recorded custom timestamps in your browser
-        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline")) || defaultTimeline;
+        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline_v2")) || defaultTimeline;
 
         const lyricsContainer = document.getElementById("lyricsContainer");
         const trackTimer = document.getElementById("trackTimer");
@@ -153,7 +173,7 @@
                 btn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     item.time = audio.currentTime;
-                    localStorage.setItem("sofia_timeline", JSON.stringify(lyricTimeline));
+                    localStorage.setItem("sofia_timeline_v2", JSON.stringify(lyricTimeline));
                     renderInterface();
                 });
 
@@ -165,7 +185,7 @@
 
         audio.addEventListener("timeupdate", () => {
             const currentTime = audio.currentTime;
-            trackTimer.innerText = `ሰዓት፦ ${formatTime(currentTime)}`;
+            trackTimer.innerText = `የሙዚቃው ሰዓት፦ ${formatTime(currentTime)}`;
 
             let activeId = -1;
             for (let i = 0; i < lyricTimeline.length; i++) {
@@ -185,7 +205,7 @@
 
         function playSong() {
             audio.play().then(() => { isPlaying = true; }).catch(err => {
-                trackTimer.innerText = "Error: mezmur.mp3 not found";
+                trackTimer.innerText = "ስህተት፦ mezmur.mp3 ፋይል አልተገኘም";
             });
         }
 
