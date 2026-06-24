@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Cinematic Orchestra</title>
+    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Complete Audio Edition</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -15,54 +15,52 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
         .player-container {
             max-width: 750px; 
             width: 90%;
             background: #111115; 
-            padding: 60px 40px; 
-            border-radius: 28px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
+            padding: 55px 35px; 
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
             border: 1px solid #22222b; 
-            position: relative;
         }
         h1 {
-            font-size: 2.5rem; color: #ff9800; margin: 0 0 5px 0; font-weight: bold;
+            font-size: 2.3rem; color: #ff9800; margin: 0 0 5px 0;
         }
         h2 {
-            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 40px 0; letter-spacing: 0.5px;
+            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 35px 0;
         }
         .controls {
-            margin-bottom: 35px; display: flex; justify-content: center; gap: 20px;
+            margin-bottom: 35px; display: flex; justify-content: center; gap: 15px;
         }
         .btn {
-            background: #ff9800; border: none; padding: 16px 50px; font-size: 1.15rem;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 35px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.3); 
+            background: #ff9800; border: none; padding: 15px 45px; font-size: 1.1rem;
+            color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
+            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 152, 0, 0.5); }
+        .btn:hover { background: #ffa726; transform: translateY(-2px); }
         .btn-stop { background: #252530; color: #ff9800; border: 1px solid rgba(255,152,0,0.2); box-shadow: none; }
         .btn-stop:hover { background: #323242; color: #ffa726; }
         
         .timer-display {
-            font-family: monospace; font-size: 1.6rem; color: #00e5ff; margin-bottom: 40px;
-            background: #181822; display: inline-block; padding: 8px 28px; border-radius: 25px;
-            border: 1px solid rgba(0, 229, 255, 0.25); font-weight: bold;
+            font-family: monospace; font-size: 1.4rem; color: #00e5ff; margin-bottom: 35px;
+            background: #181822; display: inline-block; padding: 6px 22px; border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.3); font-weight: bold;
         }
 
         .lyrics-container {
-            display: flex; flex-direction: column; gap: 35px;
+            display: flex; flex-direction: column; gap: 32px;
         }
         .lyric-line {
-            font-size: 1.85rem; color: #353545; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); line-height: 1.7; font-weight: 500;
+            font-size: 1.8rem; color: #353545; transition: all 0.5s ease; line-height: 1.7; font-weight: 500;
         }
-        /* Glowing visual transition style matching the screenshots */
+        /* The exact highlight state triggered along with the audio milestones */
         .active-cinematic {
             color: #ffffff;
             font-weight: bold;
-            transform: scale(1.03);
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 152, 0, 0.4);
+            transform: scale(1.02);
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 152, 0, 0.4);
         }
     </style>
 </head>
@@ -70,7 +68,7 @@
 
     <div class="player-container">
         <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ሉዓላዊ ሲኒማቲክ ስሪት</h2>
+        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ሲኒማቲክ መሣሪያ ስሪት</h2>
         
         <div class="controls">
             <button class="btn" id="startBtn">አጫውት (PLAY CINEMATIC)</button>
@@ -89,19 +87,22 @@
 
     <script>
         let audioCtx = null;
-        let activeNodes = [];
+        let masterGain = null;
+        let padOscillators = [];
+        let activeMelodyTimers = [];
         let startTime = 0;
         let clockInterval = null;
         let isRunning = false;
+        let lastTriggeredLine = -1;
 
-        // Custom melody sequences for the AI Synth Voice/Instrument Guide
-        const melodies = {
-            1: [146.83, 164.81, 174.61, 220.00, 196.00], // Melody theme for Verse 1
-            2: [196.00, 220.00, 261.63, 293.66, 220.00], // Melody theme for Verse 2
-            3: [293.66, 329.63, 349.23, 440.00, 392.00]  // Soaring melody theme for Verse 3
+        // Custom flowing musical sequence mappings to represent the singer's vocal track phrases
+        const voiceMelodies = {
+            1: [293.66, 329.63, 349.23, 440.00, 392.00, 349.23], // Verse 1 notes
+            2: [392.00, 440.00, 523.25, 587.33, 440.00, 392.00], // Verse 2 notes
+            3: [587.33, 523.25, 440.00, 392.00, 349.23, 293.66]  // Verse 3 notes
         };
 
-        // Precision timeline from your screenshots
+        // Strict timeline matching your exact snapshot data structural captures
         const timeline = [
             { id: 0, time: 0 },
             { id: 1, time: 6 },
@@ -109,152 +110,167 @@
             { id: 3, time: 26 }
         ];
 
-        function initOrchestra() {
+        function initOrchestraEngine() {
+            // Safely spawn audio context upon user click interaction to bypass browser blocking policies
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            // 1. CREATE MASTER ECHO/REVERB SPACE
+            masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 2.0); // Smooth background entry
+            masterGain.connect(audioCtx.destination);
+
+            // Generate an expansive space sound using an audio delay line feed
             let delayNode = audioCtx.createDelay();
-            let feedback = audioCtx.createGain();
-            let delayGain = audioCtx.createGain();
+            delayNode.delayTime.value = 0.5;
+            let delayFeedback = audioCtx.createGain();
+            delayFeedback.gain.value = 0.35;
+            let delayVolume = audioCtx.createGain();
+            delayVolume.gain.value = 0.25;
 
-            delayNode.delayTime.value = 0.6;
-            feedback.gain.value = 0.4;
-            delayGain.gain.value = 0.3;
+            delayNode.connect(delayFeedback);
+            delayFeedback.connect(delayNode);
+            delayNode.connect(delayVolume);
+            delayVolume.connect(masterGain);
 
-            delayNode.connect(feedback);
-            feedback.connect(delayNode);
-            delayNode.connect(delayGain);
-            delayGain.connect(audioCtx.destination);
-
-            // 2. GENERATE LUSH CINEMATIC STRINGS PAD CHORD
-            const stringFrequencies = [73.42, 110.00, 146.83, 220.00, 293.66];
-            stringFrequencies.forEach((freq) => {
+            // Synthesize a warm, evolving cinematic ambient chord cluster backdrop (D-Minor Base)
+            const backdropFrequencies = [73.42, 110.00, 146.83, 174.61, 220.00];
+            backdropFrequencies.forEach((freq) => {
                 let osc = audioCtx.createOscillator();
                 let filter = audioCtx.createBiquadFilter();
                 let padGain = audioCtx.createGain();
 
-                osc.type = 'triangle';
+                osc.type = "triangle"; // Smooth, analog string emulation properties
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                osc.detune.setValueAtTime((Math.random() * 12) - 6, audioCtx.currentTime);
+                osc.detune.setValueAtTime((Math.random() * 10) - 5, audioCtx.currentTime); // Chorus microtonal detune
 
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+                filter.type = "lowpass";
+                filter.frequency.setValueAtTime(380, audioCtx.currentTime);
 
                 padGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                padGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 3.0);
+                padGain.gain.linearRampToValueAtTime(0.12 / backdropFrequencies.length, audioCtx.currentTime + 3.0);
 
                 osc.connect(filter);
                 filter.connect(padGain);
-                padGain.connect(audioCtx.destination);
+                padGain.connect(masterGain);
                 padGain.connect(delayNode);
 
-                activeNodes.push(osc);
+                osc.start();
+                padOscillators.push(osc);
             });
         }
 
-        // Plays a high-quality instrumental phrase to represent the voice
-        function triggerVoiceMelody(lineId) {
-            if (!melodies[lineId]) return;
+        function playVocalGuideMelody(lineId) {
+            if (!voiceMelodies[lineId] || !audioCtx) return;
             let now = audioCtx.currentTime;
-            
-            // Play a sequence of flowing cinematic notes matching sentence cadence
-            melodies[lineId].forEach((freq, idx) => {
-                let noteTime = now + (idx * 0.75);
-                
-                // Voice Lead Oscillator
+
+            // Sequentially trigger notes mimicking structural phrase timing cadences
+            voiceMelodies[lineId].forEach((freq, idx) => {
+                let noteStart = now + (idx * 0.55);
+                let noteLen = 0.45;
+
                 let osc = audioCtx.createOscillator();
-                let vGain = audioCtx.createGain();
+                let voiceGain = audioCtx.createGain();
                 let voiceFilter = audioCtx.createBiquadFilter();
 
-                // Warm sine mixed with soft square structure gives a vocal woodwind color
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, noteTime);
+                osc.type = "sine"; // Clean, flute-like melodic vocal core focus
+                osc.frequency.setValueAtTime(freq, noteStart);
                 
-                voiceFilter.type = 'lowpass';
-                voiceFilter.frequency.setValueAtTime(800, noteTime);
+                // Add micro-vibrato swell dynamics over note length
+                osc.frequency.linearRampToValueAtTime(freq + 3, noteStart + 0.2);
+                osc.frequency.linearRampToValueAtTime(freq - 2, noteStart + 0.4);
 
-                // Expressive swell envelope
-                vGain.gain.setValueAtTime(0, noteTime);
-                vGain.gain.linearRampToValueAtTime(0.15, noteTime + 0.2);
-                vGain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.7);
+                voiceFilter.type = "lowpass";
+                voiceFilter.frequency.setValueAtTime(1000, noteStart);
+
+                // Classical expression envelope curve modeling
+                voiceGain.gain.setValueAtTime(0, noteStart);
+                voiceGain.gain.linearRampToValueAtTime(0.2, noteStart + 0.08);
+                voiceGain.gain.exponentialRampToValueAtTime(0.001, noteStart + noteLen);
 
                 osc.connect(voiceFilter);
-                voiceFilter.connect(vGain);
-                vGain.connect(audioCtx.destination);
+                voiceFilter.connect(voiceGain);
+                voiceGain.connect(masterGain);
 
-                // Run through the echo system
-                let delayNode = audioCtx.createDelay();
-                delayNode.delayTime.value = 0.4;
-                let dGain = audioCtx.createGain();
-                dGain.gain.value = 0.15;
-                vGain.connect(delayGainNode => dGain).connect(audioCtx.destination);
-
-                osc.start(noteTime);
-                osc.stop(noteTime + 0.75);
-                activeNodes.push(osc);
+                osc.start(noteStart);
+                osc.stop(noteStart + noteLen);
             });
 
-            // Sparkling chime accent marking the lyric changeover
-            let chimeOsc = audioCtx.createOscillator();
+            // Play a bright cinematic accent tone to mark the transition shift clearly
+            let chime = audioCtx.createOscillator();
             let chimeGain = audioCtx.createGain();
-            chimeOsc.type = 'sine';
-            chimeOsc.frequency.setValueAtTime(880, now);
-            chimeGain.gain.setValueAtTime(0.05, now);
-            chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-            chimeOsc.connect(chimeGain);
-            chimeGain.connect(audioCtx.destination);
-            chimeOsc.start(now);
-            chimeOsc.stop(now + 1.5);
-            activeNodes.push(chimeOsc);
+            chime.type = "sine";
+            chime.frequency.setValueAtTime(880, now);
+            chimeGain.gain.setValueAtTime(0.06, now);
+            chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+            chime.connect(chimeGain);
+            chimeGain.connect(masterGain);
+            chime.start(now);
+            chime.stop(now + 1.0);
         }
 
-        function engineTick() {
+        function engineClockTick() {
             if (!isRunning) return;
             const elapsed = Math.floor(audioCtx.currentTime - startTime);
 
-            // Update time indicator
+            // Paint text updates to timer container
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
             document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
-            // Handle highlighting logic and voice triggers
-            let activeIdx = 0;
+            // Track active text intervals dynamically
+            let currentLineIdx = 0;
             timeline.forEach((milestone) => {
                 if (elapsed >= milestone.time) {
-                    if (activeIdx !== milestone.id) {
-                        activeIdx = milestone.id;
-                        if (milestone.id > 0) {
-                            triggerVoiceMelody(milestone.id);
-                        }
-                    }
+                    currentLineIdx = milestone.id;
                 }
             });
 
-            for (let i = 0; i < 4; i++) {
-                const el = document.getElementById(`line-${i}`);
-                if (i === activeIdx) {
-                    el.classList.add("active-cinematic");
-                } else {
-                    el.classList.remove("active-cinematic");
+            // Fire melodic guide signals when cross-over line boundaries transition
+            if (currentLineIdx !== lastTriggeredLine) {
+                lastTriggeredLine = currentLineIdx;
+                if (currentLineIdx > 0) {
+                    playVocalGuideMelody(currentLineIdx);
                 }
             }
 
-            if (elapsed >= 38) {
-                stopOrchestra();
+            // Sync visual typography emphasis layout elements flawlessly
+            for (let i = 0; i < 4; i++) {
+                const element = document.getElementById(`line-${i}`);
+                if (i === currentLineIdx) {
+                    element.classList.add("active-cinematic");
+                } else {
+                    element.classList.remove("active-cinematic");
+                }
+            }
+
+            // Loop reset safeguard once verse segment completes completely
+            if (elapsed >= 36) {
+                clearOrchestraEngine();
             }
         }
 
-        function stopOrchestra() {
+        function clearOrchestraEngine() {
             isRunning = false;
             clearInterval(clockInterval);
-            
-            activeNodes.forEach(node => { try { node.stop(); } catch(e){} });
-            activeNodes = [];
-            
-            if (audioCtx) {
-                try { audioCtx.close(); } catch(e){}
-                audioCtx = null;
+            lastTriggeredLine = -1;
+
+            // Immediately disconnect and wind down active synth nodes safely
+            padOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
+            padOscillators = [];
+
+            if (masterGain && audioCtx) {
+                try {
+                    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                } catch(e){}
             }
+
+            setTimeout(() => {
+                if (audioCtx) {
+                    try { audioCtx.close(); } catch(e){}
+                    audioCtx = null;
+                }
+            }, 600);
 
             document.getElementById("timeClock").innerText = "0:00";
             for (let i = 0; i < 4; i++) {
@@ -265,18 +281,16 @@
         document.getElementById("startBtn").addEventListener("click", () => {
             if (isRunning) return;
             isRunning = true;
-            initOrchestra();
+            
+            initOrchestraEngine();
             startTime = audioCtx.currentTime;
             
-            // Instantly highlight intro line
             document.getElementById("line-0").classList.add("active-cinematic");
-            
-            // Start precision checking loops
-            clockInterval = setInterval(engineTick, 200);
+            clockInterval = setInterval(engineClockTick, 200);
         });
 
         document.getElementById("stopBtn").addEventListener("click", () => {
-            stopOrchestra();
+            clearOrchestraEngine();
         });
     </script>
 </body>
