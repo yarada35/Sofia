@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ — Full Instrumental Masterpiece</title>
+    <title>ከወንድም በላይ — Pure Silent Presentation</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #070709; 
+            background: #09090b; 
             color: #f4f4f5; 
             text-align: center; 
             margin: 0; 
@@ -20,63 +20,61 @@
         .player-container {
             max-width: 850px; 
             width: 92%;
-            background: #0f0f13; 
-            padding: 55px 45px; 
-            border-radius: 32px;
-            box-shadow: 0 35px 80px rgba(0,0,0,0.95); 
-            border: 1px solid #1f1f29;
+            background: #111115; 
+            padding: 50px 40px; 
+            border-radius: 28px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.9); 
+            border: 1px solid #22222d;
         }
         h1 {
-            font-size: 2.5rem; color: #ff9800; margin: 0 0 8px 0; font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 2.4rem; color: #ff9800; margin: 0 0 6px 0; font-weight: 700;
         }
         h2 {
-            font-size: 1.05rem; color: #646477; font-weight: normal; margin: 0 0 40px 0; letter-spacing: 0.8px;
+            font-size: 1.05rem; color: #69697e; font-weight: normal; margin: 0 0 35px 0; letter-spacing: 0.5px;
         }
         .controls {
-            margin-bottom: 35px; display: flex; justify-content: center; gap: 20px;
+            margin-bottom: 30px; display: flex; justify-content: center; gap: 20px;
         }
         .btn {
-            background: #ff9800; border: none; padding: 16px 52px; font-size: 1.1rem;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 40px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.25); 
+            background: #ff9800; border: none; padding: 16px 48px; font-size: 1.1rem;
+            color: #000; font-weight: bold; cursor: pointer; border-radius: 35px;
+            transition: all 0.2s ease; box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 152, 0, 0.45); }
-        .btn-stop { background: #1a1a24; color: #ff9800; border: 1px solid rgba(255,152,0,0.2); box-shadow: none; }
-        .btn-stop:hover { background: #262633; color: #ffa726; }
+        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255, 152, 0, 0.5); }
+        .btn-stop { background: #22222a; color: #ff9800; border: 1px solid rgba(255,152,0,0.25); box-shadow: none; }
+        .btn-stop:hover { background: #31313d; color: #ffa726; }
         
         .timer-display {
-            font-family: monospace; font-size: 1.6rem; color: #00e5ff; margin-bottom: 35px;
-            background: #13131c; display: inline-block; padding: 8px 28px; border-radius: 24px;
-            border: 1px solid rgba(0, 229, 255, 0.2); font-weight: bold;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+            font-family: monospace; font-size: 1.5rem; color: #00e5ff; margin-bottom: 35px;
+            background: #161622; display: inline-block; padding: 8px 26px; border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.25); font-weight: bold;
         }
 
-        /* Fluid viewport sliding system */
+        /* Presentation sliding window viewport */
         .lyric-window {
             height: 260px;
             overflow: hidden;
             position: relative;
             margin-top: 20px;
-            border-top: 1px dashed #1f1f29;
-            border-bottom: 1px dashed #1f1f29;
-            padding: 25px 0;
+            border-top: 1px solid #22222d;
+            border-bottom: 1px solid #22222d;
+            padding: 20px 0;
         }
         .lyric-scroller {
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(85px);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(80px);
         }
         .lyric-line {
-            font-size: 1.8rem; color: #2a2a35; padding: 22px 0; transition: all 0.6s ease;
-            line-height: 1.8; font-weight: 500; transform: scale(0.92); opacity: 0.15;
+            font-size: 1.75rem; color: #2e2e3a; padding: 22px 0; transition: all 0.5s ease;
+            line-height: 1.7; font-weight: 500; transform: scale(0.9); opacity: 0.2;
         }
-        /* Active line glows with warm gold presentation hues */
+        /* Active line glows and scales perfectly with ABSOLUTELY ZERO AUDIO */
         .lyric-line.active-cinematic {
             color: #ffffff;
             font-weight: 700;
-            transform: scale(1.04);
+            transform: scale(1.05);
             opacity: 1;
-            text-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 152, 0, 0.5);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 152, 0, 0.4);
         }
     </style>
 </head>
@@ -84,10 +82,10 @@
 
     <div class="player-container">
         <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ክላሲካል የፒያኖ እና የሕብረ-ዜማ ስብስብ</h2>
+        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — የጽሑፍ ማሳያ ስሪት (እጅግ በጣም ጸጥተኛ)</h2>
         
         <div class="controls">
-            <button class="btn" id="startBtn">ሙዚቃውን አጫውት (PLAY SONG)</button>
+            <button class="btn" id="startBtn">ጀምር (START TIMELINE)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
 
@@ -104,222 +102,55 @@
     </div>
 
     <script>
-        let audioCtx = null;
-        let masterGain = null;
-        let delayNode = null;
-        let activeOscillators = [];
         let secondsElapsed = 0;
         let clockInterval = null;
         let isRunning = false;
-        let currentActiveLine = -1;
 
-        // Structured musical timelines
-        const lineHeights = [85, 0, -88, -178];
+        // Visual alignment layout matrix offsets
+        const lineHeights = [80, 0, -85, -175];
 
-        // Beautiful, soft piano chord structure arrays (Root, Third, Fifth, Octave)
-        const chordProgressions = {
-            0: [146.83, 174.61, 220.00, 293.66], // D Minor (Deep Intro)
-            1: [146.83, 174.61, 220.00, 349.23], // D Minor Varied (Verse 1 Background)
-            2: [130.81, 164.81, 196.00, 261.63], // C Major Smooth (Verse 2 Background)
-            3: [146.83, 196.00, 233.08, 293.66]  // G Minor Warm (Verse 3 Backdrop)
-        };
-
-        // A truly flowing, lyrical instrumental melody track following the vocal lines
-        const songMelodies = {
-            1: [293.66, 329.63, 349.23, 440.00, 392.00, 349.23, 329.63, 293.66],
-            2: [349.23, 392.00, 440.00, 523.25, 440.00, 392.00, 349.23, 392.00],
-            3: [440.00, 523.25, 587.33, 523.25, 440.00, 392.00, 349.23, 293.66]
-        };
-
-        function playSoftPianoNote(freq, startTime, duration, targetVolume) {
-            if (!audioCtx) return;
-            try {
-                // Synthesize organic piano properties by multi-layering partial harmonics
-                let oscFundamental = audioCtx.createOscillator();
-                let oscOvertone = audioCtx.createOscillator();
-                let gainNode = audioCtx.createGain();
-                let lowpassFilter = audioCtx.createBiquadFilter();
-
-                oscFundamental.type = "sine";
-                oscFundamental.frequency.setValueAtTime(freq, startTime);
-
-                // Add a softer overtone one octave higher to replicate real string vibrations
-                oscOvertone.type = "sine";
-                oscOvertone.frequency.setValueAtTime(freq * 2, startTime);
-
-                lowpassFilter.type = "lowpass";
-                lowpassFilter.frequency.setValueAtTime(500, startTime); // Keeps notes velvet-soft and warm
-
-                // Real instrument modeling envelope curve: Instant strike attack, long elegant fading decay
-                gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 0.015);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-                oscFundamental.connect(lowpassFilter);
-                oscOvertone.connect(lowpassFilter);
-                lowpassFilter.connect(gainNode);
-                gainNode.connect(masterGain);
-
-                if (delayNode) {
-                    gainNode.connect(delayNode);
-                }
-
-                oscFundamental.start(startTime);
-                oscFundamental.stop(startTime + duration);
-                oscOvertone.start(startTime);
-                oscOvertone.stop(startTime + duration);
-
-                activeOscillators.push(oscFundamental, oscOvertone);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
-        function playStringEnsemblePad(freq, startTime, duration, targetVolume) {
-            if (!audioCtx) return;
-            try {
-                let osc = audioCtx.createOscillator();
-                let gainNode = audioCtx.createGain();
-                let filter = audioCtx.createBiquadFilter();
-
-                osc.type = "triangle"; // Smooth bowing tone emulation
-                osc.frequency.setValueAtTime(freq, startTime);
-                osc.detune.setValueAtTime((Math.random() * 10) - 5, startTime); // Warm chorus detuning
-
-                filter.type = "lowpass";
-                filter.frequency.setValueAtTime(280, startTime); // Mutes all sharp electronic frequencies entirely
-
-                // Slow swell string movement modeling
-                gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(targetVolume, startTime + 2.0);
-                gainNode.gain.linearRampToValueAtTime(0.001, startTime + duration);
-
-                osc.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(masterGain);
-
-                osc.start(startTime);
-                osc.stop(startTime + duration);
-                activeOscillators.push(osc);
-            } catch (e) {}
-        }
-
-        function executeMusicalArrangement(lineIdx) {
-            if (!audioCtx) return;
-            let now = audioCtx.currentTime;
-
-            // 1. Play deep string backing chords to anchor the arrangement smoothly
-            if (chordProgressions[lineIdx]) {
-                chordProgressions[lineIdx].forEach((freq, idx) => {
-                    playStringEnsemblePad(freq / 2, now, 9.5, 0.03); // Ultra-quiet sub-bass padding
-                    playSoftPianoNote(freq, now + (idx * 0.2), 3.5, 0.08); // Arpeggiated soft piano rhythm chords
-                });
-            }
-
-            // 2. Roll out the lyrical solo instrumental voice lines
-            if (songMelodies[lineIdx]) {
-                songMelodies[lineIdx].forEach((freq, idx) => {
-                    let noteTime = now + 1.2 + (idx * 0.65); // Deliberate, breathing cadence spacing
-                    playSoftPianoNote(freq, noteTime, 0.7, 0.14); // Primary voice melody notes
-                    playSoftPianoNote(freq * 1.5, noteTime + 0.1, 0.4, 0.02); // Warm fifth accent harmonic
-                });
-            }
-        }
-
-        function songEngineTick() {
+        function pureVisualTick() {
             if (!isRunning) return;
             secondsElapsed++;
 
-            // 1. Update visual clock displays
+            // 1. Update visual clock counter layout
             let mins = Math.floor(secondsElapsed / 60);
             let secs = secondsElapsed % 60;
             document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
-            // 2. Map current visual milestone frames
+            // 2. Map current visual milestone frames cleanly
             let activeIdx = 0;
             if (secondsElapsed >= 6) activeIdx = 1;
             if (secondsElapsed >= 16) activeIdx = 2;
             if (secondsElapsed >= 26) activeIdx = 3;
 
-            // 3. Slide the lyrics seamlessly inside the layout viewport
+            // 3. Slide the lyric engine block upwards perfectly
             const scroller = document.getElementById("lyricScroller");
             scroller.style.transform = `translateY(${lineHeights[activeIdx]}px)`;
 
-            // Update highlighting attributes
+            // 4. Repaint glowing active presentation highlight classes
             for (let i = 0; i < 4; i++) {
-                let element = document.getElementById(`line-${i}`);
+                let el = document.getElementById(`line-${i}`);
                 if (i === activeIdx) {
-                    element.classList.add("active-cinematic");
+                    el.classList.add("active-cinematic");
                 } else {
-                    element.classList.remove("active-cinematic");
+                    el.classList.remove("active-cinematic");
                 }
             }
 
-            // 4. Smoothly trigger musical segments at target cue transitions
-            if (activeIdx !== currentActiveLine) {
-                currentActiveLine = activeIdx;
-                executeMusicalArrangement(activeIdx);
-            }
-
-            // End performance cleanly when sequence track reaches completion
+            // End performance track cycle safely at milestone limits
             if (secondsElapsed >= 38) {
-                teardownSongEngine();
+                killVisualEngine();
             }
         }
 
-        function initializeAudioInfrastructure() {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContextClass();
-            
-            masterGain = audioCtx.createGain();
-            masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-            masterGain.gain.linearRampToValueAtTime(0.45, audioCtx.currentTime + 1.5); // Warm master volume fade-in
-            masterGain.connect(audioCtx.destination);
-
-            // Generate spacious cathedral room acoustics using a feedback delay architecture
-            delayNode = audioCtx.createDelay();
-            delayNode.delayTime.value = 0.55;
-            let delayFeedback = audioCtx.createGain();
-            delayFeedback.gain.value = 0.4; // Soft echoing tail
-            let delayVolume = audioCtx.createGain();
-            delayVolume.gain.value = 0.25;
-
-            delayNode.connect(delayFeedback);
-            delayFeedback.connect(delayNode);
-            delayNode.connect(delayVolume);
-            delayVolume.connect(masterGain);
-
-            // Play the gorgeous introductory ambient drone track instantly
-            executeMusicalArrangement(0);
-        }
-
-        function teardownSongEngine() {
+        function killVisualEngine() {
             isRunning = false;
             clearInterval(clockInterval);
-            currentActiveLine = -1;
             secondsElapsed = 0;
 
-            // Safely wind down all active instruments to prevent clipping artifacts
-            activeOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
-            activeOscillators = [];
-
-            if (masterGain && audioCtx) {
-                try {
-                    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-                    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                } catch(e){}
-            }
-
-            setTimeout(() => {
-                if (audioCtx) {
-                    try { audioCtx.close(); } catch(e){}
-                    audioCtx = null;
-                }
-            }, 500);
-
-            // Reset interface views completely
             document.getElementById("timeClock").innerText = "0:00";
-            document.getElementById("lyricScroller").style.transform = "translateY(85px)";
+            document.getElementById("lyricScroller").style.transform = "translateY(80px)";
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`line-${i}`).classList.remove("active-cinematic");
             }
@@ -329,15 +160,16 @@
             if (isRunning) return;
             isRunning = true;
 
+            // Kick off visual changes instantly on user click event action
             document.getElementById("line-0").classList.add("active-cinematic");
             document.getElementById("lyricScroller").style.transform = `translateY(${lineHeights[0]}px)`;
 
-            initializeAudioInfrastructure();
-            clockInterval = setInterval(songEngineTick, 1000); // Drives bulletproof visual timelines
+            // Run pure visual loops with zero audio context creation
+            clockInterval = setInterval(pureVisualTick, 1000);
         });
 
         document.getElementById("stopBtn").addEventListener("click", () => {
-            teardownSongEngine();
+            killVisualEngine();
         });
     </script>
 </body>
