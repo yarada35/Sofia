@@ -3,295 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Complete Audio Edition</title>
+    <title>ከወንድም በላይ</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #0a0a0c; 
+            background: #0c0c0e; 
             color: #f5f5f7; 
             text-align: center; 
+            padding: 40px 20px;
             margin: 0; 
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 90vh;
         }
-        .player-container {
-            max-width: 750px; 
-            width: 90%;
-            background: #111115; 
-            padding: 55px 35px; 
-            border-radius: 24px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
-            border: 1px solid #22222b; 
+        .container {
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #16161a; 
+            padding: 30px; 
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+            border: 1px solid #2a2a35; 
         }
-        h1 {
-            font-size: 2.3rem; color: #ff9800; margin: 0 0 5px 0;
+        h1 { 
+            color: #ff9800; 
+            font-size: 2rem; 
+            margin-bottom: 5px; 
         }
-        h2 {
-            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 35px 0;
+        h2 { 
+            font-size: 1.1rem; 
+            color: #8a8a9d; 
+            font-weight: normal; 
+            margin-bottom: 30px; 
         }
         .controls {
-            margin-bottom: 35px; display: flex; justify-content: center; gap: 15px;
+            margin-bottom: 30px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
         }
         .btn {
-            background: #ff9800; border: none; padding: 15px 45px; font-size: 1.1rem;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
-            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
+            background: #ff9800; 
+            border: none; 
+            padding: 14px 35px; 
+            font-size: 1.1rem;
+            color: #000; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 30px;
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-2px); }
-        .btn-stop { background: #252530; color: #ff9800; border: 1px solid rgba(255,152,0,0.2); box-shadow: none; }
-        .btn-stop:hover { background: #323242; color: #ffa726; }
-        
-        .timer-display {
-            font-family: monospace; font-size: 1.4rem; color: #00e5ff; margin-bottom: 35px;
-            background: #181822; display: inline-block; padding: 6px 22px; border-radius: 20px;
-            border: 1px solid rgba(0, 229, 255, 0.3); font-weight: bold;
+        .btn:hover {
+            background: #ffa726; 
+            transform: translateY(-2px); 
         }
-
-        .lyrics-container {
-            display: flex; flex-direction: column; gap: 32px;
+        .btn-stop {
+            background: #3a3a4a;
+            color: #fff;
         }
-        .lyric-line {
-            font-size: 1.8rem; color: #353545; transition: all 0.5s ease; line-height: 1.7; font-weight: 500;
+        .btn-stop:hover {
+            background: #4a4a5a;
         }
-        /* The exact highlight state triggered along with the audio milestones */
-        .active-cinematic {
-            color: #ffffff;
-            font-weight: bold;
-            transform: scale(1.02);
-            text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 152, 0, 0.4);
+        .status-badge {
+            background: #22222b; 
+            padding: 8px 20px; 
+            border-radius: 20px;
+            font-size: 0.9rem; 
+            color: #00e5ff; 
+            display: inline-block; 
+            margin-bottom: 25px; 
+            border: 1px solid #1a8a9d; 
+        }
+        .section-title { 
+            font-size: 1.3rem; 
+            color: #00e5ff; 
+            margin-top: 20px; 
+            font-weight: bold; 
+        }
+        .lyric-box {
+            font-size: 2rem; 
+            margin: 20px 0; 
+            min-height: 200px; 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center; 
+            align-content: center;
+            gap: 15px; 
+            padding: 30px; 
+            background: #1a1a24; 
+            border-radius: 12px; 
+            border: 1px solid #23232f; 
+            line-height: 2;
+        }
+        /* Style for individual words */
+        .word {
+            color: #5a5a6e; 
+            transition: all 0.15s ease; 
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .word:hover {
+            background: #2a2a35;
+            color: #fff;
+        }
+        /* Glowing amber look when the specific word is being sung */
+        .active-word { 
+            color: #ff9800; 
+            font-weight: bold; 
+            text-shadow: 0 0 12px rgba(255,152,0,0.6); 
+            transform: scale(1.1); 
         }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
-        <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ሲኒማቲክ መሣሪያ ስሪት</h2>
+    <div class="container">
+        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
+        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት 6/8 ወለባ መዝሙር</h2>
         
         <div class="controls">
-            <button class="btn" id="startBtn">አጫውት (PLAY CINEMATIC)</button>
+            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
-
-        <div class="timer-display" id="timeClock">0:00</div>
-
-        <div class="lyrics-container">
-            <div class="lyric-line" id="line-0">🎵 [ የሙዚቃ መግቢያ (INTRO) ]</div>
-            <div class="lyric-line" id="line-1">የሰበሰብኳቸው... በዙሪያዬ የነበሩ፤ በቀን መከራዬ... ፈጥነው ተበተኑ።</div>
-            <div class="lyric-line" id="line-2">ሰዉማ ምንድነው... ዛሬ እጅህን ነገ የሚጠፋ፤ በምድር ወዳጅ ላይ... የጣለው ልቤ ተስፋ።</div>
-            <div class="lyric-line" id="line-3">ማን ከወንድም አብልጦ... የሚጠጋኝ አለ፤ በሞት ጥላ መካከል... አብሮኝ የቆመ</div>
-        </div>
+        
+        <div class="status-badge" id="status">ቃል በቃል ማጫወቻ ዝግጁ ነው (Word Engine Ready)</div>
+        <div class="section-title" id="sectionIndicator">ክፍል፦ ዝግጁ</div>
+        
+        <div class="lyric-box" id="lyricsContainer"></div>
     </div>
 
     <script>
-        let audioCtx = null;
-        let masterGain = null;
-        let padOscillators = [];
-        let activeMelodyTimers = [];
-        let startTime = 0;
-        let clockInterval = null;
-        let isRunning = false;
-        let lastTriggeredLine = -1;
+        const audio = new Audio("mezmur.mp3");
+        let isPlaying = false;
 
-        // Custom flowing musical sequence mappings to represent the singer's vocal track phrases
-        const voiceMelodies = {
-            1: [293.66, 329.63, 349.23, 440.00, 392.00, 349.23], // Verse 1 notes
-            2: [392.00, 440.00, 523.25, 587.33, 440.00, 392.00], // Verse 2 notes
-            3: [587.33, 523.25, 440.00, 392.00, 349.23, 293.66]  // Verse 3 notes
-        };
+        // WORD-BY-WORD TIMELINE MAP
+        // 'time' is the exact second that specific word drops in the audio file.
+        const wordTimeline = [
+            // INTRO
+            { text: "(የሙዚቃ", time: 0.0, section: "መግቢያ (INTRO)" },
+            { text: "መግቢያ...)", time: 2.0, section: "መግቢያ (INTRO)" },
 
-        // Strict timeline matching your exact snapshot data structural captures
-        const timeline = [
-            { id: 0, time: 0 },
-            { id: 1, time: 6 },
-            { id: 2, time: 16 },
-            { id: 3, time: 26 }
+            // VERSE 1
+            { text: "የሰበሰብኳቸው…", time: 5.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "በዙሪያዬ", time: 7.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የነበሩ፤", time: 9.0, section: "ስንኝ 1 (VERSE 1)" },
+            
+            { text: "በቀን", time: 11.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "መከራዬ…", time: 12.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ፈጥነው", time: 14.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ተበተኑ።", time: 16.0, section: "ስንኝ 1 (VERSE 1)" },
+            
+            { text: "ሰውማ", time: 18.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ምንድነው…", time: 20.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ዛሬ", time: 21.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "አጅቦ", time: 22.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ነገ", time: 23.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የሚጠፋ፤", time: 24.5, section: "ስንኝ 1 (VERSE 1)" },
+            
+            { text: "በምድር", time: 27.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ወዳጅ", time: 28.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ላይ…", time: 29.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "የጣለው", time: 31.0, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ልቤ", time: 32.5, section: "ስንኝ 1 (VERSE 1)" },
+            { text: "ተስፋ።", time: 33.5, section: "ስንኝ 1 (VERSE 1)" },
+
+            // CHORUS
+            { text: "ግን", time: 36.0, section: "አዝማች (CHORUS)" },
+            { text: "ከወንድም", time: 37.0, section: "አዝማች (CHORUS)" },
+            { text: "አብልጦ…", time: 38.5, section: "አዝማች (CHORUS)" },
+            { text: "የሚጠጋጋኝ", time: 40.5, section: "አዝማች (CHORUS)" },
+            { text: "አለ፤", time: 42.0, section: "አዝማች (CHORUS)" },
+            
+            { text: "በሞት", time: 44.0, section: "አዝማች (CHORUS)" },
+            { text: "ጥላ", time: 45.0, section: "አዝማች (CHORUS)" },
+            { text: "መካከል…", time: 46.2, section: "አዝማች (CHORUS)" },
+            { text: "አብሮኝ", time: 48.0, section: "አዝማች (CHORUS)" },
+            { text: "የቆመ", time: 49.5, section: "አዝማች (CHORUS)" },
+            { text: "ወዳጅ", time: 51.0, section: "አዝማች (CHORUS)" },
+            { text: "አለ!", time: 52.5, section: "አዝማች (CHORUS)" },
+            
+            { text: "እርሱማ", time: 55.0, section: "አዝማች (CHORUS)" },
+            { text: "ኢየሱስ", time: 56.5, section: "አዝማች (CHORUS)" },
+            { text: "ነው…", time: 58.0, section: "አዝማች (CHORUS)" },
+            { text: "በምንም", time: 59.5, section: "አዝማች (CHORUS)" },
+            { text: "የማይለየኝ፤", time: 61.5, section: "አዝማች (CHORUS)" },
+            
+            { text: "ሰው", time: 64.0, section: "አዝማች (CHORUS)" },
+            { text: "ሁሉ", time: 65.0, section: "አዝማች (CHORUS)" },
+            { text: "ሲተወኝ…", time: 66.2, section: "አዝማች (CHORUS)" },
+            { text: "ደረቱ", time: 68.0, section: "አዝማች (CHORUS)" },
+            { text: "ላይ", time: 69.2, section: "አዝማች (CHORUS)" },
+            { text: "ያቀፈኝ።", time: 70.5, section: "አዝማች (CHORUS)" }
         ];
 
-        function initOrchestraEngine() {
-            // Safely spawn audio context upon user click interaction to bypass browser blocking policies
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            masterGain = audioCtx.createGain();
-            masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-            masterGain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 2.0); // Smooth background entry
-            masterGain.connect(audioCtx.destination);
+        const lyricsContainer = document.getElementById("lyricsContainer");
+        const sectionIndicator = document.getElementById("sectionIndicator");
+        const statusBadge = document.getElementById("status");
 
-            // Generate an expansive space sound using an audio delay line feed
-            let delayNode = audioCtx.createDelay();
-            delayNode.delayTime.value = 0.5;
-            let delayFeedback = audioCtx.createGain();
-            delayFeedback.gain.value = 0.35;
-            let delayVolume = audioCtx.createGain();
-            delayVolume.gain.value = 0.25;
-
-            delayNode.connect(delayFeedback);
-            delayFeedback.connect(delayNode);
-            delayNode.connect(delayVolume);
-            delayVolume.connect(masterGain);
-
-            // Synthesize a warm, evolving cinematic ambient chord cluster backdrop (D-Minor Base)
-            const backdropFrequencies = [73.42, 110.00, 146.83, 174.61, 220.00];
-            backdropFrequencies.forEach((freq) => {
-                let osc = audioCtx.createOscillator();
-                let filter = audioCtx.createBiquadFilter();
-                let padGain = audioCtx.createGain();
-
-                osc.type = "triangle"; // Smooth, analog string emulation properties
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                osc.detune.setValueAtTime((Math.random() * 10) - 5, audioCtx.currentTime); // Chorus microtonal detune
-
-                filter.type = "lowpass";
-                filter.frequency.setValueAtTime(380, audioCtx.currentTime);
-
-                padGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                padGain.gain.linearRampToValueAtTime(0.12 / backdropFrequencies.length, audioCtx.currentTime + 3.0);
-
-                osc.connect(filter);
-                filter.connect(padGain);
-                padGain.connect(masterGain);
-                padGain.connect(delayNode);
-
-                osc.start();
-                padOscillators.push(osc);
-            });
-        }
-
-        function playVocalGuideMelody(lineId) {
-            if (!voiceMelodies[lineId] || !audioCtx) return;
-            let now = audioCtx.currentTime;
-
-            // Sequentially trigger notes mimicking structural phrase timing cadences
-            voiceMelodies[lineId].forEach((freq, idx) => {
-                let noteStart = now + (idx * 0.55);
-                let noteLen = 0.45;
-
-                let osc = audioCtx.createOscillator();
-                let voiceGain = audioCtx.createGain();
-                let voiceFilter = audioCtx.createBiquadFilter();
-
-                osc.type = "sine"; // Clean, flute-like melodic vocal core focus
-                osc.frequency.setValueAtTime(freq, noteStart);
+        // Generate individual interactive word spans on the dashboard
+        function initializeWordEngine() {
+            lyricsContainer.innerHTML = "";
+            wordTimeline.forEach((item, index) => {
+                const span = document.createElement("span");
+                span.className = "word";
+                span.id = `word-${index}`;
+                span.innerText = item.text;
                 
-                // Add micro-vibrato swell dynamics over note length
-                osc.frequency.linearRampToValueAtTime(freq + 3, noteStart + 0.2);
-                osc.frequency.linearRampToValueAtTime(freq - 2, noteStart + 0.4);
+                // Clicking ANY word makes the audio jump directly to its playback timestamp!
+                span.addEventListener("click", () => {
+                    audio.currentTime = item.time;
+                    if (!isPlaying) playSong();
+                });
 
-                voiceFilter.type = "lowpass";
-                voiceFilter.frequency.setValueAtTime(1000, noteStart);
-
-                // Classical expression envelope curve modeling
-                voiceGain.gain.setValueAtTime(0, noteStart);
-                voiceGain.gain.linearRampToValueAtTime(0.2, noteStart + 0.08);
-                voiceGain.gain.exponentialRampToValueAtTime(0.001, noteStart + noteLen);
-
-                osc.connect(voiceFilter);
-                voiceFilter.connect(voiceGain);
-                voiceGain.connect(masterGain);
-
-                osc.start(noteStart);
-                osc.stop(noteStart + noteLen);
+                lyricsContainer.appendChild(span);
             });
-
-            // Play a bright cinematic accent tone to mark the transition shift clearly
-            let chime = audioCtx.createOscillator();
-            let chimeGain = audioCtx.createGain();
-            chime.type = "sine";
-            chime.frequency.setValueAtTime(880, now);
-            chimeGain.gain.setValueAtTime(0.06, now);
-            chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
-            chime.connect(chimeGain);
-            chimeGain.connect(masterGain);
-            chime.start(now);
-            chime.stop(now + 1.0);
         }
 
-        function engineClockTick() {
-            if (!isRunning) return;
-            const elapsed = Math.floor(audioCtx.currentTime - startTime);
+        // Keep updating which specific word lights up as the audio plays
+        audio.addEventListener("timeupdate", () => {
+            const currentTime = audio.currentTime;
+            let activeIndex = -1;
 
-            // Paint text updates to timer container
-            let mins = Math.floor(elapsed / 60);
-            let secs = elapsed % 60;
-            document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-            // Track active text intervals dynamically
-            let currentLineIdx = 0;
-            timeline.forEach((milestone) => {
-                if (elapsed >= milestone.time) {
-                    currentLineIdx = milestone.id;
-                }
-            });
-
-            // Fire melodic guide signals when cross-over line boundaries transition
-            if (currentLineIdx !== lastTriggeredLine) {
-                lastTriggeredLine = currentLineIdx;
-                if (currentLineIdx > 0) {
-                    playVocalGuideMelody(currentLineIdx);
+            // Find the current word based on audio progress
+            for (let i = 0; i < wordTimeline.length; i++) {
+                if (currentTime >= wordTimeline[i].time) {
+                    activeIndex = i;
                 }
             }
 
-            // Sync visual typography emphasis layout elements flawlessly
-            for (let i = 0; i < 4; i++) {
-                const element = document.getElementById(`line-${i}`);
-                if (i === currentLineIdx) {
-                    element.classList.add("active-cinematic");
-                } else {
-                    element.classList.remove("active-cinematic");
-                }
+            if (activeIndex !== -1) {
+                sectionIndicator.innerText = `ክፍል፦ ${wordTimeline[activeIndex].section}`;
+                
+                document.querySelectorAll(".word").forEach((el, index) => {
+                    if (index === activeIndex) {
+                        el.classList.add("active-word");
+                    } else {
+                        el.classList.remove("active-word");
+                    }
+                });
             }
-
-            // Loop reset safeguard once verse segment completes completely
-            if (elapsed >= 36) {
-                clearOrchestraEngine();
-            }
-        }
-
-        function clearOrchestraEngine() {
-            isRunning = false;
-            clearInterval(clockInterval);
-            lastTriggeredLine = -1;
-
-            // Immediately disconnect and wind down active synth nodes safely
-            padOscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
-            padOscillators = [];
-
-            if (masterGain && audioCtx) {
-                try {
-                    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-                    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-                } catch(e){}
-            }
-
-            setTimeout(() => {
-                if (audioCtx) {
-                    try { audioCtx.close(); } catch(e){}
-                    audioCtx = null;
-                }
-            }, 600);
-
-            document.getElementById("timeClock").innerText = "0:00";
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`line-${i}`).classList.remove("active-cinematic");
-            }
-        }
-
-        document.getElementById("startBtn").addEventListener("click", () => {
-            if (isRunning) return;
-            isRunning = true;
-            
-            initOrchestraEngine();
-            startTime = audioCtx.currentTime;
-            
-            document.getElementById("line-0").classList.add("active-cinematic");
-            clockInterval = setInterval(engineClockTick, 200);
         });
 
-        document.getElementById("stopBtn").addEventListener("click", () => {
-            clearOrchestraEngine();
-        });
+        function playSong() {
+            audio.play().then(() => {
+                isPlaying = true;
+                statusBadge.innerText = "መዝሙሩ እየተጫወተ ነው (ቃል በቃል ማመሳሰል)";
+                statusBadge.style.color = "#ff9800";
+                statusBadge.style.borderColor = "#ff9800";
+            }).catch(error => {
+                statusBadge.innerText = "እባክዎ mezmur.mp3 በካታሎግዎ ውስጥ መኖሩን ያረጋግጡ";
+            });
+        }
+
+        function stopSong() {
+            audio.pause();
+            audio.currentTime = 0;
+            isPlaying = false;
+            statusBadge.innerText = "የድምፅ ሞገዶች ቆመዋል (Engine Idle)";
+            statusBadge.style.color = "#00e5ff";
+            statusBadge.style.borderColor = "#1a8a9d";
+            sectionIndicator.innerText = "ክፍል፦ ዝግጁ";
+            document.querySelectorAll(".word").forEach(el => el.classList.remove("active-word"));
+        }
+
+        document.getElementById("playBtn").addEventListener("click", playSong);
+        document.getElementById("stopBtn").addEventListener("click", stopSong);
+        
+        initializeWordEngine();
     </script>
 </body>
 </html>
