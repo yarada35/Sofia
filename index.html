@@ -3,268 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>የመዝሙር ማመሳሰያ ስቱዲዮ</title>
+    <title>ይቅር ስላልከኝ ነው እኔ መቆሜ</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background: #0c0c0e; 
             color: #f5f5f7; 
             text-align: center; 
-            padding: 40px 20px;
             margin: 0; 
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 90vh;
+            min-height: 100vh;
         }
-        .container {
-            max-width: 950px; 
-            width: 100%;
+        .player-container {
+            max-width: 650px; 
+            width: 90%;
             background: #16161a; 
-            padding: 30px; 
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+            padding: 50px 30px; 
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
             border: 1px solid #2a2a35; 
         }
-        .title-banner {
-            color: #ff9800; font-size: 2rem; font-weight: bold; margin-bottom: 5px;
+        .audio-visual {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #ff9800;
+            display: inline-block;
         }
-        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin-bottom: 25px; }
-        
+        h1 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+        }
+        h2 {
+            font-size: 1.1rem;
+            color: #8a8a9d;
+            font-weight: normal;
+            margin: 0 0 40px 0;
+        }
         .controls {
-            margin-bottom: 20px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+            margin-bottom: 45px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
         .btn {
-            border: none; padding: 12px 28px; font-size: 1.05rem;
+            background: #ff9800; border: none; padding: 14px 45px; font-size: 1.15rem;
             color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
-            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2); 
+            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
-        .btn-play { background: #ff9800; }
-        .btn-play:hover { background: #ffa726; transform: translateY(-2px); }
-        .btn-stop { background: #3a3a4a; color: #fff; box-shadow: none; }
-        .btn-add { background: #4caf50; color: #fff; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
-        .btn-add:hover { background: #66bb6a; transform: translateY(-2px); }
-        .btn-export { background: #00e5ff; color: #000; box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3); }
-        .btn-export:hover { background: #33ecff; transform: translateY(-2px); }
-        
-        .time-display {
-            font-family: monospace; font-size: 1.4rem; color: #00e5ff;
-            margin-bottom: 20px; background: #22222b; display: inline-block;
-            padding: 8px 20px; border-radius: 20px; border: 1px solid #1a8a9d; font-weight: bold;
-        }
-        
-        .lyric-box {
-            margin: 20px 0; display: flex; flex-direction: column; gap: 12px; text-align: left;
-        }
-        
-        .lyric-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; background: #1a1a24; border-radius: 10px;
-            border: 1px solid #23232f; gap: 15px;
-        }
-        
-        .verse-text {
-            font-size: 1.4rem; color: #f5f5f7; flex-grow: 1; font-weight: 500;
-        }
-        
-        .sync-stamp-btn {
-            background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
-            padding: 10px 18px; font-size: 0.95rem; border-radius: 6px; cursor: pointer;
-            font-family: monospace; font-weight: bold; min-width: 160px;
-            transition: all 0.2s;
-        }
-        .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
-
-        .active-row { 
-            background: #251f15 !important; border: 1px solid #ff9800 !important;
-        }
-        .active-row .verse-text { color: #ff9800 !important; font-weight: bold; }
-        
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100;
-        }
-        .modal-content {
-            background: #16161a; border: 2px solid #00e5ff; padding: 25px;
-            border-radius: 12px; max-width: 750px; width: 90%; text-align: left;
-        }
-        textarea {
-            width: 100%; height: 320px; background: #0c0c0e; color: #00e5ff;
-            border: 1px solid #2a2a35; border-radius: 6px; padding: 10px;
-            font-family: monospace; font-size: 0.85rem; margin-top: 15px; resize: none;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="title-banner">ይቅር ስላልከኝ ነው እኔ መቆሜ sit </div>
-        <h2>የማመሳሰያ ስቱዲዮ (Real Lyrics Only)</h2>
-        
-        <div class="controls">
-            <button class="btn btn-play" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
-            <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
-            <button class="btn btn-export" id="exportBtn">🎯 የተመሳሰለውን ኮድ አውርድ (EXPORT CODE)</button>
-        </div>
-        
-        <div class="time-display" id="trackTimer">የሙዚቃው ሰዓት፦ 0:00</div>
-        
-        <div class="lyric-box" id="lyricsContainer"></div>
-    </div>
-
-    <!-- Export Modal -->
-    <div class="modal" id="codeModal">
-        <div class="modal-content">
-            <h3 style="color:#00e5ff; margin-top:0;">🎉 የተመሳሰለው ኮድ ተዘጋጅቷል!</h3>
-            <p style="color:#8a8a9d; font-size:0.9rem;">ከታች ያለውን ኮድ በሙሉ መርጠው በመቅዳት (Copy) GitHub ላይ ባለው <strong>index.html</strong> ውስጥ ሙሉ በሙሉ ይተኩት (Paste)።</p>
-            <textarea id="codeTextArea" readonly></textarea>
-            <button class="btn btn-stop" style="margin-top:15px; width:100%;" id="closeModalBtn">ዝጋ (Close)</button>
-        </div>
-    </div>
-
-    <script>
-        const audio = new Audio("mezmur.mp3");
-
-        // Storing purely your real vocal track lines
-        let lyricTimeline = [
-            { id: 1, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (Music Intro) ]" },
-            { id: 2, time: 4.0, text: "ይቅር ስላልከኝ ነው እኔ መቆሜ" },
-            { id: 3, time: 9.0, text: "ደግሞ እንዳልፈርድ እርዳኝ" },
-            { id: 4, time: 14.0, text: "ደግሞ እንዳልፈርድ እርዳኝ" },
-            { id: 5, time: 19.0, text: "በሰዎች ድካም" }
-        ];
-
-        const lyricsContainer = document.getElementById("lyricsContainer");
-        const trackTimer = document.getElementById("trackTimer");
-
-        function formatTime(seconds) {
-            let m = Math.floor(seconds / 60);
-            let s = Math.floor(seconds % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        function renderInterface() {
-            lyricsContainer.innerHTML = "";
-            lyricTimeline.sort((a, b) => a.time - b.time);
-            
-            lyricTimeline.forEach((item) => {
-                const row = document.createElement("div");
-                row.className = "lyric-row";
-                row.id = `row-${item.id}`;
-                
-                const txtDiv = document.createElement("div");
-                txtDiv.className = "verse-text";
-                txtDiv.innerText = item.text;
-
-                const btn = document.createElement("button");
-                btn.className = "sync-stamp-btn";
-                btn.innerText = `⏱️ ሰዓት መዝግብ (${formatTime(item.time)})`;
-                btn.addEventListener("click", () => {
-                    item.time = audio.currentTime;
-                    renderInterface();
-                });
-
-                row.appendChild(txtDiv);
-                row.appendChild(btn);
-                lyricsContainer.appendChild(row);
-            });
-        }
-
-        audio.addEventListener("timeupdate", () => {
-            const currentTime = audio.currentTime;
-            trackTimer.innerText = `የሙዚቃው ሰዓት፦ ${formatTime(currentTime)}`;
-
-            let activeId = -1;
-            for (let i = 0; i < lyricTimeline.length; i++) {
-                if (currentTime >= lyricTimeline[i].time) {
-                    activeId = lyricTimeline[i].id;
-                }
-            }
-
-            document.querySelectorAll(".lyric-row").forEach(el => {
-                if (el.id === `row-${activeId}`) {
-                    el.classList.add("active-row");
-                } else {
-                    el.classList.remove("active-row");
-                }
-            });
-        });
-
-        document.getElementById("playBtn").addEventListener("click", () => {
-            audio.play().catch(err => {
-                trackTimer.innerText = "ስህተት፦ mezmur.mp3 አልተገኘም!";
-            });
-        });
-        document.getElementById("stopBtn").addEventListener("click", () => {
-            audio.pause(); audio.currentTime = 0;
-        });
-        
-        function generateProductionHTML() {
-            let timelineJSON = JSON.stringify(lyricTimeline, null, 4);
-            return `<!DOCTYPE html>
-<html lang="am">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ይቅር ስላልከኝ ነው እኔ መቆሜ</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0c0c0e; color: #f5f5f7; text-align: center; padding: 40px 20px; margin: 0; }
-        .container { max-width: 750px; margin: 40px auto; background: #16161a; padding: 40px 30px; border-radius: 16px; border: 1px solid #2a2a35; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-        h1 { color: #ff9800; font-size: 2.2rem; margin-bottom: 5px; }
-        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin-bottom: 30px; }
-        .btn { background: #ff9800; border: none; padding: 14px 40px; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 30px; margin: 10px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); }
         .btn:hover { background: #ffa726; transform: translateY(-2px); }
         .btn-stop { background: #3a3a4a; color: #fff; box-shadow: none; }
-        .lyric-box { margin-top: 35px; display: flex; flex-direction: column; gap: 24px; }
-        .line { font-size: 1.8rem; color: #444454; transition: all 0.3s ease; padding: 5px; line-height: 1.6; }
-        .active-line { color: #ff9800; font-weight: bold; text-shadow: 0 0 15px rgba(255,152,0,0.4); transform: scale(1.04); }
+        .btn-stop:hover { background: #4e4e64; }
+        
+        .lyrics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .lyric-line {
+            font-size: 1.9rem;
+            color: #3e3e4d;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        /* This active style triggers precisely at your custom timestamps */
+        .active-vocal {
+            color: #ff9800;
+            font-weight: bold;
+            transform: scale(1.04);
+            text-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div class="player-container">
+        <div class="audio-visual" id="vocalIcon">🎵</div>
         <h1>ይቅር ስላልከኝ ነው እኔ መቆሜ</h1>
         <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር</h2>
-        <button class="btn" onclick="audio.play()">አጫውት (PLAY)</button>
-        <button class="btn btn-stop" onclick="audio.pause(); audio.currentTime=0;">ቁም (STOP)</button>
-        <div class="lyric-box" id="lyrics"></div>
+        
+        <div class="controls">
+            <button class="btn" id="playBtn">አጫውት (PLAY)</button>
+            <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
+        </div>
+
+        <div class="lyrics-container">
+            <div class="lyric-line" id="line-0">🎵 [ የሙዚቃ መግቢያ (Music Intro) ]</div>
+            <div class="lyric-line" id="line-1">ይቅር ስላልከኝ ነው እኔ መቆሜ</div>
+            <div class="lyric-line" id="line-2">ደግሞ እንዳልፈርድ እርዳኝ</div>
+            <div class="lyric-line" id="line-3">ደግሞ እንዳልፈርድ እርዳኝ</div>
+            <div class="lyric-line" id="line-4">በሰዎች ድካም</div>
+        </div>
     </div>
+
     <script>
         const audio = new Audio("mezmur.mp3");
-        const timeline = ${timelineJSON};
-        const box = document.getElementById("lyrics");
-        
-        timeline.forEach((item, idx) => {
-            const div = document.createElement("div");
-            div.className = "line";
-            div.id = "line-" + idx;
-            div.innerText = item.text;
-            box.appendChild(div);
+        const playBtn = document.getElementById("playBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const vocalIcon = document.getElementById("vocalIcon");
+
+        // Fixed timeline matching your exact stamps from image_89e9ed.png
+        const timeline = [
+            { time: 0, index: 0 },
+            { time: 4, index: 1 },
+            { time: 9, index: 2 },
+            { time: 14, index: 3 },
+            { time: 19, index: 4 }
+        ];
+
+        playBtn.addEventListener("click", () => {
+            audio.play();
+            vocalIcon.style.animation = "pulse 0.8s infinite alternate";
         });
 
-        audio.addEventListener("timeupdate", () => {
-            let activeIdx = 0;
-            for(let i=0; i<timeline.length; i++) {
-                if(audio.currentTime >= timeline[i].time) activeIdx = i;
-            }
-            document.querySelectorAll(".line").forEach((el, idx) => {
-                if(idx === activeIdx) el.classList.add("active-line");
-                else el.classList.remove("active-line");
-            });
+        stopBtn.addEventListener("click", () => {
+            audio.pause();
+            audio.currentTime = 0;
+            vocalIcon.style.animation = "none";
+            clearHighlights();
         });
-    <\/script>
-</body>
-</html>`;
+
+        function clearHighlights() {
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(`line-${i}`).classList.remove("active-vocal");
+            }
         }
 
-        document.getElementById("exportBtn").addEventListener("click", () => {
-            document.getElementById("codeTextArea").value = generateProductionHTML();
-            document.getElementById("codeModal").style.display = "flex";
-        });
-        document.getElementById("closeModalBtn").addEventListener("click", () => {
-            document.getElementById("codeModal").style.display = "none";
+        audio.addEventListener("timeupdate", () => {
+            let currentIdx = 0;
+            for (let i = 0; i < timeline.length; i++) {
+                if (audio.currentTime >= timeline[i].time) {
+                    currentIdx = timeline[i].index;
+                }
+            }
+
+            for (let i = 0; i < 5; i++) {
+                const el = document.getElementById(`line-${i}`);
+                if (i === currentIdx && !audio.paused) {
+                    el.classList.add("active-vocal");
+                } else {
+                    el.classList.remove("active-vocal");
+                }
+            }
         });
 
-        renderInterface();
+        audio.addEventListener("ended", () => {
+            vocalIcon.style.animation = "none";
+            clearHighlights();
+        });
     </script>
 </body>
 </html>
