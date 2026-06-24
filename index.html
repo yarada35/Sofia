@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Cinematic Player</title>
+    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Cinematic Orchestra</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -18,65 +18,57 @@
             overflow-x: hidden;
         }
         .player-container {
-            max-width: 700px; 
+            max-width: 750px; 
             width: 90%;
             background: #111115; 
-            padding: 50px 40px; 
+            padding: 60px 40px; 
             border-radius: 28px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
             border: 1px solid #22222b; 
             position: relative;
         }
-        .glow-orb {
-            position: absolute;
-            top: -50px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(255, 152, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: 0; pointer-events: none;
-        }
         h1 {
-            font-size: 2.4rem; color: #ff9800; margin: 0 0 5px 0; position: relative; z-index: 1;
+            font-size: 2.5rem; color: #ff9800; margin: 0 0 5px 0; font-weight: bold;
         }
         h2 {
-            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 35px 0; position: relative; z-index: 1;
+            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 40px 0; letter-spacing: 0.5px;
         }
         .controls {
-            margin-bottom: 45px; display: flex; justify-content: center; gap: 20px; position: relative; z-index: 1;
+            margin-bottom: 35px; display: flex; justify-content: center; gap: 20px;
         }
         .btn {
-            background: #ff9800; border: none; padding: 15px 45px; font-size: 1.1rem;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 20px rgba(255, 152, 0, 0.25); 
+            background: #ff9800; border: none; padding: 16px 50px; font-size: 1.15rem;
+            color: #000; font-weight: bold; cursor: pointer; border-radius: 35px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-3px); box-shadow: 0 6px 25px rgba(255, 152, 0, 0.4); }
+        .btn:hover { background: #ffa726; transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 152, 0, 0.5); }
         .btn-stop { background: #252530; color: #ff9800; border: 1px solid rgba(255,152,0,0.2); box-shadow: none; }
         .btn-stop:hover { background: #323242; color: #ffa726; }
         
         .timer-display {
-            font-family: monospace; font-size: 1.2rem; color: #00e5ff; margin-bottom: 30px;
-            background: #181822; display: inline-block; padding: 6px 18px; border-radius: 20px;
-            border: 1px solid rgba(0, 229, 255, 0.2);
+            font-family: monospace; font-size: 1.6rem; color: #00e5ff; margin-bottom: 40px;
+            background: #181822; display: inline-block; padding: 8px 28px; border-radius: 25px;
+            border: 1px solid rgba(0, 229, 255, 0.25); font-weight: bold;
         }
 
         .lyrics-container {
-            display: flex; flex-direction: column; gap: 32px; position: relative; z-index: 1;
+            display: flex; flex-direction: column; gap: 35px;
         }
         .lyric-line {
-            font-size: 1.75rem; color: #353545; transition: all 0.5s ease; line-height: 1.7; font-weight: 400;
+            font-size: 1.85rem; color: #353545; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); line-height: 1.7; font-weight: 500;
         }
-        /* Style when the generative cinematic voice reaches the timestamp */
+        /* Glowing visual transition style matching the screenshots */
         .active-cinematic {
             color: #ffffff;
             font-weight: bold;
             transform: scale(1.03);
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 152, 0, 0.3);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 152, 0, 0.4);
         }
     </style>
 </head>
 <body>
 
     <div class="player-container">
-        <div class="glow-orb"></div>
         <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
         <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ሉዓላዊ ሲኒማቲክ ስሪት</h2>
         
@@ -97,100 +89,147 @@
 
     <script>
         let audioCtx = null;
-        let oscillators = [];
-        let biquadFilter = null;
-        let masterGain = null;
+        let activeNodes = [];
         let startTime = 0;
-        let timerInterval = null;
+        let clockInterval = null;
         let isRunning = false;
-        let spokenLines = new Set();
 
-        // Exact timeline parameters extracted directly from image_be7bfa.png
+        // Custom melody sequences for the AI Synth Voice/Instrument Guide
+        const melodies = {
+            1: [146.83, 164.81, 174.61, 220.00, 196.00], // Melody theme for Verse 1
+            2: [196.00, 220.00, 261.63, 293.66, 220.00], // Melody theme for Verse 2
+            3: [293.66, 329.63, 349.23, 440.00, 392.00]  // Soaring melody theme for Verse 3
+        };
+
+        // Precision timeline from your screenshots
         const timeline = [
-            { id: 0, time: 0, text: "" },
-            { id: 1, time: 6, text: "የሰበሰብኳቸው በዙሪያዬ የነበሩ በቀን መከራዬ ፈጥነው ተበተኑ" },
-            { id: 2, time: 16, text: "ሰዉማ ምንድነው ዛሬ እጅህን ነገ የሚጠፋ በምድር ወዳጅ ላይ የጣለው ልቤ ተስፋ" },
-            { id: 3, time: 26, text: "ማን ከወንድም አብልጦ የሚጠጋኝ አለ በሞት ጥላ መካከል አብሮኝ የቆመ" }
+            { id: 0, time: 0 },
+            { id: 1, time: 6 },
+            { id: 2, time: 16 },
+            { id: 3, time: 26 }
         ];
 
-        function initCinematicEngine() {
+        function initOrchestra() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            masterGain = audioCtx.createGain();
-            masterGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-            masterGain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 3); 
+            // 1. CREATE MASTER ECHO/REVERB SPACE
+            let delayNode = audioCtx.createDelay();
+            let feedback = audioCtx.createGain();
+            let delayGain = audioCtx.createGain();
 
-            biquadFilter = audioCtx.createBiquadFilter();
-            biquadFilter.type = "lowpass";
-            biquadFilter.Q.value = 1;
-            biquadFilter.frequency.setValueAtTime(250, audioCtx.currentTime);
-            biquadFilter.frequency.linearRampToValueAtTime(450, audioCtx.currentTime + 10);
+            delayNode.delayTime.value = 0.6;
+            feedback.gain.value = 0.4;
+            delayGain.gain.value = 0.3;
 
-            // Generates a rich, resonant open-fifth cinematic minor cluster chord drone
-            const frequencies = [73.42, 110.00, 146.83, 220.00, 293.66, 329.63]; 
-            
-            frequencies.forEach((freq, index) => {
+            delayNode.connect(feedback);
+            feedback.connect(delayNode);
+            delayNode.connect(delayGain);
+            delayGain.connect(audioCtx.destination);
+
+            // 2. GENERATE LUSH CINEMATIC STRINGS PAD CHORD
+            const stringFrequencies = [73.42, 110.00, 146.83, 220.00, 293.66];
+            stringFrequencies.forEach((freq) => {
                 let osc = audioCtx.createOscillator();
-                let oscGain = audioCtx.createGain();
-                
-                // Mix saw and triangle waveforms for a smooth cinematic string effect
-                osc.type = index % 2 === 0 ? "sawtooth" : "triangle";
+                let filter = audioCtx.createBiquadFilter();
+                let padGain = audioCtx.createGain();
+
+                osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.detune.setValueAtTime((Math.random() * 12) - 6, audioCtx.currentTime);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+
+                padGain.gain.setValueAtTime(0, audioCtx.currentTime);
+                padGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 3.0);
+
+                osc.connect(filter);
+                filter.connect(padGain);
+                padGain.connect(audioCtx.destination);
+                padGain.connect(delayNode);
+
+                activeNodes.push(osc);
+            });
+        }
+
+        // Plays a high-quality instrumental phrase to represent the voice
+        function triggerVoiceMelody(lineId) {
+            if (!melodies[lineId]) return;
+            let now = audioCtx.currentTime;
+            
+            // Play a sequence of flowing cinematic notes matching sentence cadence
+            melodies[lineId].forEach((freq, idx) => {
+                let noteTime = now + (idx * 0.75);
                 
-                // Subtle detuning to make the acoustic field sound massive
-                osc.detune.setValueAtTime((Math.random() * 8) - 4, audioCtx.currentTime);
+                // Voice Lead Oscillator
+                let osc = audioCtx.createOscillator();
+                let vGain = audioCtx.createGain();
+                let voiceFilter = audioCtx.createBiquadFilter();
+
+                // Warm sine mixed with soft square structure gives a vocal woodwind color
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, noteTime);
                 
-                oscGain.gain.setValueAtTime(0.08 / frequencies.length, audioCtx.currentTime);
-                
-                osc.connect(oscGain);
-                oscGain.connect(biquadFilter);
-                oscillators.push(osc);
-                osc.start();
+                voiceFilter.type = 'lowpass';
+                voiceFilter.frequency.setValueAtTime(800, noteTime);
+
+                // Expressive swell envelope
+                vGain.gain.setValueAtTime(0, noteTime);
+                vGain.gain.linearRampToValueAtTime(0.15, noteTime + 0.2);
+                vGain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.7);
+
+                osc.connect(voiceFilter);
+                voiceFilter.connect(vGain);
+                vGain.connect(audioCtx.destination);
+
+                // Run through the echo system
+                let delayNode = audioCtx.createDelay();
+                delayNode.delayTime.value = 0.4;
+                let dGain = audioCtx.createGain();
+                dGain.gain.value = 0.15;
+                vGain.connect(delayGainNode => dGain).connect(audioCtx.destination);
+
+                osc.start(noteTime);
+                osc.stop(noteTime + 0.75);
+                activeNodes.push(osc);
             });
 
-            biquadFilter.connect(masterGain);
-            masterGain.connect(audioCtx.destination);
+            // Sparkling chime accent marking the lyric changeover
+            let chimeOsc = audioCtx.createOscillator();
+            let chimeGain = audioCtx.createGain();
+            chimeOsc.type = 'sine';
+            chimeOsc.frequency.setValueAtTime(880, now);
+            chimeGain.gain.setValueAtTime(0.05, now);
+            chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+            chimeOsc.connect(chimeGain);
+            chimeGain.connect(audioCtx.destination);
+            chimeOsc.start(now);
+            chimeOsc.stop(now + 1.5);
+            activeNodes.push(chimeOsc);
         }
 
-        function speakVocalLine(text) {
-            if (!text) return;
-            window.speechSynthesis.cancel(); // Clears overlapping vocal stacks
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            
-            // Auto-detect system voice profile targeting smooth low-mid tones
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.lang.startsWith("am") || v.name.includes("Google") || v.lang.startsWith("en"));
-            
-            if (preferredVoice) utterance.voice = preferredVoice;
-            utterance.rate = 0.82;  // Slow, measured tempo for dramatic, cinematic clarity
-            utterance.pitch = 0.90; // Deepened pitch structure for professional weight
-            
-            window.speechSynthesis.speak(utterance);
-        }
-
-        function updateLoop() {
+        function engineTick() {
             if (!isRunning) return;
-            const elapsed = Math.floor((audioCtx.currentTime - startTime));
-            
-            // Format timer clock display
+            const elapsed = Math.floor(audioCtx.currentTime - startTime);
+
+            // Update time indicator
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
             document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
-            // Evaluate current timestamp targets
+            // Handle highlighting logic and voice triggers
             let activeIdx = 0;
-            timeline.forEach((item) => {
-                if (elapsed >= item.time) {
-                    activeIdx = item.id;
-                    if (!spokenLines.has(item.id) && item.text !== "") {
-                        spokenLines.add(item.id);
-                        speakVocalLine(item.text);
+            timeline.forEach((milestone) => {
+                if (elapsed >= milestone.time) {
+                    if (activeIdx !== milestone.id) {
+                        activeIdx = milestone.id;
+                        if (milestone.id > 0) {
+                            triggerVoiceMelody(milestone.id);
+                        }
                     }
                 }
             });
 
-            // Update visual active line states
             for (let i = 0; i < 4; i++) {
                 const el = document.getElementById(`line-${i}`);
                 if (i === activeIdx) {
@@ -200,54 +239,45 @@
                 }
             }
 
-            // Loop termination safety check at the end of the verse segment
-            if (elapsed >= 40) {
-                stopEngine();
+            if (elapsed >= 38) {
+                stopOrchestra();
             }
         }
 
-        function stopEngine() {
+        function stopOrchestra() {
             isRunning = false;
-            clearInterval(timerInterval);
-            window.speechSynthesis.cancel();
+            clearInterval(clockInterval);
             
-            if (masterGain) {
-                try {
-                    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-                    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
-                    setTimeout(() => {
-                        if (audioCtx) {
-                            oscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
-                            audioCtx.close();
-                        }
-                    }, 1600);
-                } catch(e) {}
+            activeNodes.forEach(node => { try { node.stop(); } catch(e){} });
+            activeNodes = [];
+            
+            if (audioCtx) {
+                try { audioCtx.close(); } catch(e){}
+                audioCtx = null;
             }
-            
+
             document.getElementById("timeClock").innerText = "0:00";
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`line-${i}`).classList.remove("active-cinematic");
             }
-            spokenLines.clear();
         }
 
         document.getElementById("startBtn").addEventListener("click", () => {
             if (isRunning) return;
             isRunning = true;
-            spokenLines.clear();
-            initCinematicEngine();
+            initOrchestra();
             startTime = audioCtx.currentTime;
-            timerInterval = setInterval(updateLoop, 250);
+            
+            // Instantly highlight intro line
+            document.getElementById("line-0").classList.add("active-cinematic");
+            
+            // Start precision checking loops
+            clockInterval = setInterval(engineTick, 200);
         });
 
         document.getElementById("stopBtn").addEventListener("click", () => {
-            stopEngine();
+            stopOrchestra();
         });
-
-        // Pre-fetch browser speech engines early for seamless voice execution
-        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-        }
     </script>
 </body>
 </html>
