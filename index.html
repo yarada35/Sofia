@@ -3,79 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>የኢትዮጵያ 6/8 ወለባ አምልኮ መዝሙር (Full Master Web Engine)</title>
+    <title>ከወንድም በላይ — Cinematic Choir Master Composition</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #0c0c0e; 
+            background: #060608; 
             color: #f5f5f7; 
             text-align: center; 
             padding: 40px 20px; 
             margin: 0; 
         }
         .container { 
-            max-width: 850px; 
+            max-width: 900px; 
             margin: 0 auto; 
-            background: #16161a; 
-            padding: 40px 30px; 
-            border-radius: 24px; 
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
-            border: 1px solid #2a2a35; 
+            background: #0d0d12; 
+            padding: 45px 35px; 
+            border-radius: 28px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8); 
+            border: 1px solid #1f1f2a; 
         }
-        h1 { color: #ff9800; font-size: 2.2rem; margin: 0 0 8px 0; font-weight: 700; }
-        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin: 0 0 35px 0; }
-        .controls { margin-bottom: 30px; display: flex; justify-content: center; gap: 15px; }
+        h1 { color: #ff9800; font-size: 2.4rem; margin: 0 0 8px 0; font-weight: 700; letter-spacing: 0.5px; }
+        h2 { font-size: 1.1rem; color: #71718a; font-weight: normal; margin: 0 0 35px 0; }
+        .controls { margin-bottom: 35px; display: flex; justify-content: center; gap: 20px; }
 
         .btn { 
-            background: #ff9800; border: none; padding: 15px 45px; 
-            font-size: 1.1rem; color: #000; font-weight: bold; cursor: pointer; 
-            border-radius: 30px; transition: all 0.2s ease; 
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
+            background: #ff9800; border: none; padding: 16px 50px; 
+            font-size: 1.15rem; color: #000; font-weight: bold; cursor: pointer; 
+            border-radius: 35px; transition: all 0.25s ease; 
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4); }
-        .btn-stop { background: #22222b; color: #ff9800; border: 1px solid #3a3a4a; box-shadow: none; }
-        .btn-stop:hover { background: #2d2d3a; color: #ffa726; }
+        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5); }
+        .btn-stop { background: #1a1a24; color: #ff9800; border: 1px solid #2d2d3d; box-shadow: none; }
+        .btn-stop:hover { background: #252533; color: #ffa726; }
         
         .status-badge { 
-            background: #1a1a24; padding: 8px 24px; border-radius: 20px; 
-            font-size: 0.95rem; color: #00e676; display: inline-block; 
-            margin-bottom: 25px; border: 1px solid #2e7d32; font-family: monospace;
+            background: #111118; padding: 10px 28px; border-radius: 25px; 
+            font-size: 1rem; color: #00e5ff; display: inline-block; 
+            margin-bottom: 30px; border: 1px solid rgba(0,229,255,0.2); font-family: monospace;
         }
         .section-title { 
-            font-size: 1.3rem; color: #00e5ff; margin-top: 20px; 
-            font-weight: bold; letter-spacing: 1px; text-transform: uppercase; 
+            font-size: 1.35rem; color: #ff9800; margin-top: 20px; 
+            font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; 
         }
 
         .lyric-box { 
-            font-size: 2.3rem; margin: 25px 0; min-height: 140px; 
+            font-size: 2.4rem; margin: 30px 0; min-height: 160px; 
             display: flex; flex-wrap: wrap; justify-content: center; 
-            align-content: center; gap: 14px; padding: 30px; 
-            background: #1a1a24; border-radius: 16px; border: 1px solid #23232f; 
-            line-height: 1.6;
+            align-content: center; gap: 16px; padding: 35px; 
+            background: #12121a; border-radius: 20px; border: 1px solid #1c1c26; 
+            line-height: 1.7;
         }
-        .syllable { color: #4a4a5e; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: default; }
+        .syllable { color: #3d3d52; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); cursor: default; }
         .active-syllable { 
-            color: #ff9800; font-weight: bold; 
-            text-shadow: 0 0 20px rgba(255,152,0,0.7), 0 0 5px #ff9800; 
-            transform: scale(1.12) translateY(-2px); 
+            color: #ffffff; font-weight: bold; 
+            text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 10px #ff9800; 
+            transform: scale(1.15) translateY(-3px); 
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
-        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት 6/8 ወለባ መዝሙር</h2>
+        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት 6/8 ወለባ መዝሙር (Cinematic Orchestra & Vocal Live Synth)</h2>
         
         <div class="controls">
-            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
+            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY LIVE ORCHESTRA)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
         
-        <div class="status-badge" id="status">Engine Idle • 0:00</div>
-        <div class="section-title" id="sectionIndicator">ከፍል፦ ዝግጁ (READY)</div>
+        <div class="status-badge" id="status">Studio Orchestrator Idle • 0:00</div>
+        <div class="section-title" id="sectionIndicator">ከፍል፦ ዝግጁ (CONCERT READY)</div>
         
         <div class="lyric-box" id="lyricsContainer">
-            </div>
+            <!-- Programmatic tracking syllables will compile here natively -->
+        </div>
     </div>
 
     <script>
@@ -87,173 +88,244 @@
         let currentSyllableIdx = 0;
         let sectionTimeElapsed = 0;
 
-        // --- NATIVE SCALE FREQUENCY DICTIONARY (C-Major / Tizita Scale Mapping) ---
+        // --- MASTER FREQUENCY DICTIONARY (C Major Pentatonic Tizita Framework) ---
         const PITCHES = {
             'C2': 65.41,  'G2': 98.00,  'A2': 110.00, 'F2': 87.31,
             'C3': 130.81, 'G3': 196.00, 'A3': 220.00, 'F3': 174.61,
-            'C4': 261.63, 'E4': 329.63, 'G4': 392.00, 'B4': 493.88, 'D4': 293.66, 'A4': 440.00, 'F4': 349.23,
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'G4': 392.00, 'A4': 440.00,
             'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'G5': 783.99, 'A5': 880.00
         };
 
-        // --- FULL MASTER SONG METADATA ARRAYS ---
+        // --- LIVE COMPOSITION LYRIC DATA SCHEMATICS ---
         const songArrangement = {
-            bpm: 65,
             timeline: ["intro", "verse1", "chorus", "verse2", "bridge", "chorus_rep", "outro"],
             progressions: { 
                 intro: 'C', verse1: 'C', chorus: 'Am', verse2: 'C', bridge: 'F', chorus_rep: 'Am', outro: 'C' 
             },
             chords: {
-                'C':  { bass: ['C2','C3'], arp: ['C4','E4','G4','C5','G4','E4'], string: ['C4','G4'] },
-                'G':  { bass: ['G2','G3'], arp: ['G3','B4','D4','G4','D4','B4'], string: ['D4','G4'] },
-                'Am': { bass: ['A2','A3'], arp: ['A3','C4','E4','C5','E4','C4'], string: ['E4','A4'] },
-                'F':  { bass: ['F2','F3'], arp: ['F3','A4','C4','C5','C4','A4'], string: ['F4','C4'] }
+                'C':  { lowDrone: ['C2', 'C3'], strings: ['E4', 'G4', 'C5'] },
+                'G':  { lowDrone: ['G2', 'G3'], strings: ['D4', 'G4', 'B4'] },
+                'Am': { lowDrone: ['A2', 'A3'], strings: ['C4', 'E4', 'A4'] },
+                'F':  { lowDrone: ['F2', 'F3'], strings: ['C4', 'F4', 'A4'] }
             },
             lyrics: {
                 intro: [
-                    { syllable: "🎵 [ባህላዊ የትዝታ ዋሽንት እና የፒያኖ መግቢያ]", duration: 8.0, pitches: {} }
+                    { syllable: "🎵 [ባህላዊ የትዝታ ዋሽንት እና የፊልም ማጀቢያ መግቢያ...]", duration: 6.0, pitches: {} }
                 ],
                 verse1: [
-                    { syllable: "የ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ሰ", duration: 0.4, pitches: { lead: 'G4' } },
-                    { syllable: "በ", duration: 0.4, pitches: { lead: 'A4' } },
-                    { syllable: "ሰብ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "ኳ", duration: 0.8, pitches: { lead: 'G4' } },
-                    { syllable: "ቸ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ው...", duration: 1.2, pitches: { lead: 'D4' } },
-                    { syllable: "በ", duration: 0.4, pitches: { lead: 'D4' } },
-                    { syllable: "ዙ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ሪያ", duration: 0.8, pitches: { lead: 'G4' } },
-                    { syllable: "ዬ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "የ", duration: 0.4, pitches: { lead: 'G4' } },
-                    { syllable: "ነ", duration: 0.4, pitches: { lead: 'E4' } },
-                    { syllable: "በ", duration: 0.8, pitches: { lead: 'D4' } },
-                    { syllable: "ሩ፤", duration: 1.5, pitches: { lead: 'C4' } },
-                    { syllable: "በ", duration: 0.5, pitches: { lead: 'E4' } },
-                    { syllable: "ቀን", duration: 0.8, pitches: { lead: 'G4' } },
-                    { syllable: "መ", duration: 0.4, pitches: { lead: 'A4' } },
-                    { syllable: "ከ", duration: 0.4, pitches: { lead: 'C5' } },
-                    { syllable: "ራ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "ዬ...", duration: 1.2, pitches: { lead: 'G4' } },
-                    { syllable: "ፈት", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ነው", duration: 0.8, pitches: { lead: 'D4' } },
-                    { syllable: "ተ", duration: 0.4, pitches: { lead: 'D4' } },
-                    { syllable: "በ", duration: 0.4, pitches: { lead: 'E4' } },
-                    { syllable: "ተ", duration: 0.8, pitches: { lead: 'D4' } },
-                    { syllable: "ኑ።", duration: 2.0, pitches: { lead: 'C4' } }
+                    { syllable: "የ", duration: 0.8, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ሰ", duration: 0.4, pitches: { leadVocal: 'G4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ሰብ", duration: 0.8, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ኳ", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ቸ", duration: 0.8, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ው...", duration: 1.2, pitches: { leadVocal: 'D4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ዙ", duration: 0.8, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ሪያ", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ዬ", duration: 0.8, pitches: { leadVocal: 'A4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ነ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "በ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ሩ፤", duration: 1.4, pitches: { leadVocal: 'C4' } },
+                    { syllable: "በ", duration: 0.5, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ቀን", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "መ", duration: 0.4, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ከ", duration: 0.4, pitches: { leadVocal: 'C5' } },
+                    { syllable: "ራ", duration: 0.8, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ዬ...", duration: 1.2, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ፈት", duration: 0.8, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ነው", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ተ", duration: 0.4, pitches: { leadVocal: 'D4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ተ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ኑ።", duration: 2.0, pitches: { leadVocal: 'C4' } }
                 ],
                 chorus: [
-                    { syllable: "ማን", duration: 0.8, pitches: { lead: 'A4', alto: 'E4' } },
-                    { syllable: "ከ", duration: 0.4, pitches: { lead: 'C5', alto: 'G4' } },
-                    { syllable: "ወን", duration: 0.8, pitches: { lead: 'E5', alto: 'C5' } },
-                    { syllable: "ድም", duration: 0.8, pitches: { lead: 'D5', alto: 'B4' } },
-                    { syllable: "አብ", duration: 0.8, pitches: { lead: 'C5', alto: 'A4' } },
-                    { syllable: "ል", duration: 0.4, pitches: { lead: 'A4', alto: 'E4' } },
-                    { syllable: "ጦ...", duration: 1.2, pitches: { lead: 'G4', alto: 'D4' } },
-                    { syllable: "የ", duration: 0.4, pitches: { lead: 'G4' } },
-                    { syllable: "ሚ", duration: 0.6, pitches: { lead: 'A4' } },
-                    { syllable: "ጠ", duration: 0.6, pitches: { lead: 'C5' } },
-                    { syllable: "ጋኝ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "አ", duration: 1.0, pitches: { lead: 'G4' } },
-                    { syllable: "ለ፤", duration: 1.5, pitches: { lead: 'E4' } },
-                    { syllable: "በ", duration: 0.5, pitches: { lead: 'G4' } },
-                    { syllable: "ሞት", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "ጥ", duration: 0.4, pitches: { lead: 'C5' } },
-                    { syllable: "ላ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "መ", duration: 0.4, pitches: { lead: 'G4' } },
-                    { syllable: "ካ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ከል...", duration: 1.2, pitches: { lead: 'D4' } },
-                    { syllable: "አብ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "ሮኝ", duration: 0.8, pitches: { lead: 'G4' } },
-                    { syllable: "የ", duration: 0.4, pitches: { lead: 'D4' } },
-                    { syllable: "ቆ", duration: 0.8, pitches: { lead: 'E4' } },
-                    { syllable: "መ።", duration: 2.5, pitches: { lead: 'C4' } }
+                    { syllable: "ግን", duration: 0.6, pitches: { leadVocal: 'A4', choirHarm: 'E4' } },
+                    { syllable: "ከ", duration: 0.4, pitches: { leadVocal: 'C5', choirHarm: 'G4' } },
+                    { syllable: "ወን", duration: 0.8, pitches: { leadVocal: 'E5', choirHarm: 'C5' } },
+                    { syllable: "ድም", duration: 0.8, pitches: { leadVocal: 'D5', choirHarm: 'B4' } },
+                    { syllable: "አብ", duration: 0.8, pitches: { leadVocal: 'C5', choirHarm: 'A4' } },
+                    { syllable: "ል", duration: 0.4, pitches: { leadVocal: 'A4', choirHarm: 'E4' } },
+                    { syllable: "ጦ...", duration: 1.2, pitches: { leadVocal: 'G4', choirHarm: 'D4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ሚ", duration: 0.6, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ጠ", duration: 0.6, pitches: { leadVocal: 'C5' } },
+                    { syllable: "ጋ", duration: 0.8, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ጋኝ", duration: 1.0, pitches: { leadVocal: 'G4' } },
+                    { syllable: "አ", duration: 1.5, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ለ፤", duration: 1.0, pitches: { leadVocal: 'G4' } },
+                    { syllable: "በ", duration: 0.5, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ሞት", duration: 0.8, pitches: { leadVocal: 'C5' } },
+                    { syllable: "ጥ", duration: 0.4, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ላ", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "መ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ካ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ከል...", duration: 1.2, pitches: { leadVocal: 'E4' } },
+                    { syllable: "አብ", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ሮኝ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ቆ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "መ።", duration: 2.2, pitches: { leadVocal: 'C4' } }
                 ],
                 verse2: [
-                    { syllable: "ወ", duration: 0.6, pitches: { lead: 'E4' } },
-                    { syllable: "ዳጅ", duration: 0.6, pitches: { lead: 'G4' } },
-                    { syllable: "ነኝ", duration: 0.6, pitches: { lead: 'A4' } },
-                    { syllable: "ባ", duration: 0.8, pitches: { lead: 'A4' } },
-                    { syllable: "ዮች...", duration: 1.2, pitches: { lead: 'G4' } },
-                    { syllable: "በ", duration: 0.4, pitches: { lead: 'E4' } },
-                    { syllable: "ደ", duration: 0.6, pitches: { lead: 'D4' } },
-                    { syllable: "ስ", duration: 0.6, pitches: { lead: 'E4' } },
-                    { syllable: "ታ", duration: 0.6, pitches: { lead: 'G4' } },
-                    { syllable: "ዬ", duration: 0.6, pitches: { lead: 'A4' } },
-                    { syllable: "ቀን", duration: 0.8, pitches: { lead: 'G4' } },
-                    { syllable: "የ", duration: 0.4, pitches: { lead: 'E4' } },
-                    { syllable: "ሳ", duration: 0.8, pitches: { lead: 'D4' } },
-                    { syllable: "ቁ፤", duration: 1.5, pitches: { lead: 'C4' } }
+                    { syllable: "ወ", duration: 0.6, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ዳጅ", duration: 0.6, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ነኝ", duration: 0.6, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ባ", duration: 0.8, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ዮች...", duration: 1.2, pitches: { leadVocal: 'G4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ደ", duration: 0.6, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ስ", duration: 0.6, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ታ", duration: 0.6, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ዬ", duration: 0.6, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ቀን", duration: 0.8, pitches: { leadVocal: 'G4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { leadVocal: 'E4' } },
+                    { syllable: "ሳ", duration: 0.8, pitches: { leadVocal: 'D4' } },
+                    { syllable: "ቁ፤", duration: 1.5, pitches: { leadVocal: 'C4' } }
                 ],
                 bridge: [
-                    { syllable: "አይ", duration: 0.5, pitches: { lead: 'A4' } },
-                    { syllable: "ለ", duration: 0.5, pitches: { lead: 'C5' } },
-                    { syllable: "ወጥ", duration: 0.5, pitches: { lead: 'D5' } },
-                    { syllable: "ም", duration: 0.5, pitches: { lead: 'E5' } },
-                    { syllable: "ፍ", duration: 0.5, pitches: { lead: 'D5' } },
-                    { syllable: "ቅ", duration: 0.5, pitches: { lead: 'C5' } },
-                    { syllable: "ሩ...", duration: 1.5, pitches: { lead: 'A4' } },
-                    { syllable: "አይ", duration: 0.5, pitches: { lead: 'G4' } },
-                    { syllable: "ለቅ", duration: 0.5, pitches: { lead: 'A4' } },
-                    { syllable: "ም", duration: 0.5, pitches: { lead: 'C5' } },
-                    { syllable: "እ", duration: 0.5, pitches: { lead: 'A4' } },
-                    { syllable: "ጄ", duration: 0.5, pitches: { lead: 'G4' } },
-                    { syllable: "ን!", duration: 1.5, pitches: { lead: 'E4' } }
+                    { syllable: "አይ", duration: 0.5, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ለ", duration: 0.5, pitches: { leadVocal: 'C5' } },
+                    { syllable: "ወጥ", duration: 0.5, pitches: { leadVocal: 'D5' } },
+                    { syllable: "ም", duration: 0.5, pitches: { leadVocal: 'E5' } },
+                    { syllable: "ፍ", duration: 0.5, pitches: { leadVocal: 'D5' } },
+                    { syllable: "ቅ", duration: 0.5, pitches: { leadVocal: 'C5' } },
+                    { syllable: "ሩ...", duration: 1.5, pitches: { leadVocal: 'A4' } },
+                    { syllable: "አይ", duration: 0.5, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ለቅ", duration: 0.5, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ም", duration: 0.5, pitches: { leadVocal: 'C5' } },
+                    { syllable: "እ", duration: 0.5, pitches: { leadVocal: 'A4' } },
+                    { syllable: "ጄ", duration: 0.5, pitches: { leadVocal: 'G4' } },
+                    { syllable: "ን!", duration: 1.5, pitches: { leadVocal: 'E4' } }
                 ],
                 chorus_rep: [
-                    { syllable: "[ድግግሞሽ አዝማች — ባለ 3 ድምፅ ሙሉ ኳየር]", duration: 12.0, pitches: {} }
+                    { syllable: "🎵 [ድግግሞሽ አዝማች — ባለ 3 ድምፅ ሙሉ የክዋየር ስብስብ]", duration: 8.0, pitches: {} }
                 ],
                 outro: [
-                    { syllable: "🎵 [የማሳረጊያ ጸጥታ... ዋሽንት ቀስ እያለ ይጠፋል]", duration: 8.0, pitches: {} }
+                    { syllable: "🎵 [የማሳረጊያ ጸጥታ... የዋሽንትና የኦርኬስትራ ኖት ቀስ እያለ ይጠፋል]", duration: 6.0, pitches: {} }
                 ]
             }
         };
 
-        function playSynthVoice(freq, startTime, duration, type = "sine", vol = 0.15) {
+        // --- ENGINE 1: LUSH CINEMATIC SYMPHONIC PAD ACOUSTICS ---
+        function playCinematicOrchestraPad(freq, startTime, duration, volume = 0.04) {
             if (!freq || !audioCtx) return;
-            let osc = audioCtx.createOscillator();
-            let gainNode = audioCtx.createGain();
-            let filter = audioCtx.createBiquadFilter();
+            
+            // Layer 3 slightly detuned saw/triangle waves to form a massive string section ensemble
+            const detunes = [-6, 0, 6];
+            detunes.forEach((detuneVal) => {
+                let osc = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+                let filter = audioCtx.createBiquadFilter();
 
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, startTime);
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(freq, startTime);
+                osc.detune.setValueAtTime(detuneVal, startTime);
 
-            filter.type = "lowpass";
-            filter.frequency.setValueAtTime(type === "triangle" ? 300 : 1200, startTime);
+                // Deep lowpass filter eliminates the buzz, leaving a rich orchestral warmth
+                filter.type = "lowpass";
+                filter.frequency.setValueAtTime(450, startTime);
+                filter.frequency.exponentialRampToValueAtTime(650, startTime + duration);
 
-            // Soft-attack piano and string envelopes to emulate instrument layers
-            gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(vol, startTime + 0.03);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                // Cinematic soft string attack envelope curves
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume / 3, startTime + 0.8); 
+                gainNode.gain.setValueAtTime(volume / 3, startTime + duration - 0.5);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
-            osc.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
 
-            osc.start(startTime);
-            osc.stop(startTime + duration);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            });
         }
 
-        function triggerInstrumentalBackdrop(progKey) {
-            if (!audioCtx || !songArrangement.chords[progKey]) return;
+        // --- ENGINE 2: HUMAN VOCAL & CHOIR FORMANT ENGINES ---
+        function playHumanVoiceSynth(freq, startTime, duration, volume = 0.16, formantType = "lead") {
+            if (!freq || !audioCtx) return;
+
+            // Base Vocal chords generator
+            let primaryOsc = audioCtx.createOscillator();
+            let subOsc = audioCtx.createOscillator();
+            let gainNode = audioCtx.createGain();
+            
+            // Human voice cords are complex; we blend triangle and square waves
+            primaryOsc.type = "triangle";
+            primaryOsc.frequency.setValueAtTime(freq, startTime);
+            
+            subOsc.type = "sawtooth";
+            subOsc.frequency.setValueAtTime(freq, startTime);
+            subOsc.detune.setValueAtTime(8, startTime); // Chorus widening width
+
+            // --- VIBRATO CIRCUITRY (Emulating Vocal Cord Modulation) ---
+            let vibratoLFO = audioCtx.createOscillator();
+            let vibratoGain = audioCtx.createGain();
+            vibratoLFO.frequency.setValueAtTime(5.8, startTime); // Human singing speed is ~5.8Hz
+            vibratoGain.gain.setValueAtTime(2.5, startTime); // Pitch oscillation depth
+            
+            vibratoLFO.connect(vibratoGain);
+            vibratoGain.connect(primaryOsc.frequency);
+            vibratoGain.connect(subOsc.frequency);
+
+            // --- FORMANT/VOWEL FILTERS (Emulating Human Chest/Throat Cavity) ---
+            // An "Ah/Oh" open vocal vowel profile requires a double bandpass throat profile
+            let throatFilter1 = audioCtx.createBiquadFilter();
+            throatFilter1.type = "bandpass";
+            throatFilter1.frequency.setValueAtTime(formantType === "lead" ? 700 : 600, startTime);
+            throatFilter1.Q.setValueAtTime(6, startTime);
+
+            let throatFilter2 = audioCtx.createBiquadFilter();
+            throatFilter2.type = "bandpass";
+            throatFilter2.frequency.setValueAtTime(formantType === "lead" ? 1150 : 1000, startTime);
+            throatFilter2.Q.setValueAtTime(5, startTime);
+
+            // Vocal dynamic envelope mapping
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.08); // Human legato vocal attack
+            gainNode.gain.setValueAtTime(volume, startTime + duration - 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+            // Wire pipeline routing paths safely
+            primaryOsc.connect(throatFilter1);
+            subOsc.connect(throatFilter1);
+            primaryOsc.connect(throatFilter2);
+            subOsc.connect(throatFilter2);
+
+            throatFilter1.connect(gainNode);
+            throatFilter2.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            vibratoLFO.start(startTime);
+            primaryOsc.start(startTime);
+            subOsc.start(startTime);
+
+            vibratoLFO.stop(startTime + duration);
+            primaryOsc.stop(startTime + duration);
+            subOsc.stop(startTime + duration);
+        }
+
+        // --- COMPOSITION ORCHESTRATION BACKDROP CONTROLLER ---
+        function deployOrchestralScore(progressionKey) {
+            if (!audioCtx || !songArrangement.chords[progressionKey]) return;
             let now = audioCtx.currentTime;
-            let chord = songArrangement.chords[progKey];
+            let currentChord = songArrangement.chords[progressionKey];
 
-            // 1. Deep 6/8 Bowed Orchestral Bass Strings
-            chord.bass.forEach(p => {
-                if(PITCHES[p]) playSynthVoice(PITCHES[p], now, 3.5, "triangle", 0.04);
+            // 1. Unleash Deep Sub-Bass Symphony Foundation (Duration: 4.2 Seconds)
+            currentChord.lowDrone.forEach(pitchKey => {
+                if(PITCHES[pitchKey]) playCinematicOrchestraPad(PITCHES[pitchKey], now, 4.2, 0.05);
             });
 
-            // 2. Linear Piano Arpeggio Array Movement
-            chord.arp.forEach((p, index) => {
-                let noteTime = now + (index * 0.35);
-                if(PITCHES[p]) playSynthVoice(PITCHES[p], noteTime, 0.6, "sine", 0.08);
+            // 2. Weave Lush Orchestral String Ensemble Harmony Beds
+            currentChord.strings.forEach(pitchKey => {
+                if(PITCHES[pitchKey]) playCinematicOrchestraPad(PITCHES[pitchKey], now, 4.2, 0.03);
             });
 
-            // 3. Ambient Shaker Accent (Traditional 6/8 Rhythm Emulation)
-            for (let i = 0; i < 6; i++) {
-                let hitTime = now + (i * 0.4);
-                playSynthVoice(800, hitTime, 0.03, "triangle", i % 3 == 0 ? 0.015 : 0.005);
-            }
+            // 3. Emulate Ambient Woodwind Echo Shimmers
+            playCinematicOrchestraPad(PITCHES[currentChord.strings[2]] * 2, now + 0.2, 1.8, 0.008);
         }
 
         function buildSyllableInterface(sectionKey) {
@@ -276,20 +348,18 @@
             playbackTime += 0.1;
             sectionTimeElapsed += 0.1;
 
-            // 1. Manage Global Timer Displays
             let mins = Math.floor(playbackTime / 60);
             let secs = Math.floor(playbackTime % 60);
-            document.getElementById("status").innerText = `ድምፅ በማጫወት ላይ • ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            document.getElementById("status").innerText = `ድምፅ በማጫወት ላይ (Cinematic Live Synth) • ${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
             let sectionKey = songArrangement.timeline[currentSectionIdx];
             let currentProgression = songArrangement.progressions[sectionKey];
 
-            // 2. Loop Backdrops on Bar Modulo Thresholds (Every 3.5 seconds)
-            if (Math.abs(sectionTimeElapsed - 0.1) < 0.01 || Math.floor(sectionTimeElapsed * 10) % 35 === 0) {
-                triggerInstrumentalBackdrop(currentProgression);
+            // Trigger lush pad loops every 4.0 seconds seamlessly
+            if (Math.abs(sectionTimeElapsed - 0.1) < 0.01 || Math.floor(sectionTimeElapsed * 10) % 40 === 0) {
+                deployOrchestralScore(currentProgression);
             }
 
-            // 3. Scan Syllable Progressions Natively
             let syllables = songArrangement.lyrics[sectionKey];
             let timeAccumulator = 0;
             let targetSyllableIdx = -1;
@@ -304,9 +374,7 @@
                 timeAccumulator += syllables[i].duration;
             }
 
-            // Handle Syllable Highlights and Audio Voicing Changes
             if (targetSyllableIdx !== -1 && targetSyllableIdx !== currentSyllableIdx) {
-                // Clear old active styles
                 let oldEl = document.getElementById(`syl-${currentSyllableIdx}`);
                 if (oldEl) oldEl.classList.remove("active-syllable");
 
@@ -314,23 +382,19 @@
                 let newEl = document.getElementById(`syl-${currentSyllableIdx}`);
                 if (newEl) newEl.classList.add("active-syllable");
 
-                // Execute Pitch voicings dynamically from metadata dictionaries
                 let pitches = syllables[currentSyllableIdx].pitches;
                 let now = audioCtx.currentTime;
-                if (pitches.lead && PITCHES[pitches.lead]) {
-                    // Lead Solo Melodic Voice Line
-                    playSynthVoice(PITCHES[pitches.lead], now, syllables[currentSyllableIdx].duration * 0.8, "sine", 0.18);
-                    
-                    // Washint Woodwind Breath Overtone Layer
-                    playSynthVoice(PITCHES[pitches.lead] * 1.5, now, 0.2, "sine", 0.02);
+                let durationLength = syllables[currentSyllableIdx].duration;
+
+                // Fire human vocal tract synthesizers
+                if (pitches.leadVocal && PITCHES[pitches.leadVocal]) {
+                    playHumanVoiceSynth(PITCHES[pitches.leadVocal], now, durationLength * 0.92, 0.18, "lead");
                 }
-                if (pitches.alto && PITCHES[pitches.alto]) {
-                    // Harmonized Vocal Layer Accent Block
-                    playSynthVoice(PITCHES[pitches.alto], now + 0.02, syllables[currentSyllableIdx].duration * 0.8, "sine", 0.08);
+                if (pitches.choirHarm && PITCHES[pitches.choirHarm]) {
+                    playHumanVoiceSynth(PITCHES[pitches.choirHarm], now + 0.01, durationLength * 0.90, 0.08, "harmony");
                 }
             }
 
-            // 4. Section Boundaries Checker
             if (sectionTimeElapsed >= timeAccumulator) {
                 currentSectionIdx++;
                 sectionTimeElapsed = 0;
@@ -359,10 +423,28 @@
                 audioCtx = null;
             }
 
-            document.getElementById("status").innerText = "Engine Idle • 0:00";
-            document.getElementById("sectionIndicator").innerText = "ከፍል፦ ዝግጁ (READY)";
+            document.getElementById("status").innerText = "Studio Orchestrator Idle • 0:00";
+            document.getElementById("sectionIndicator").innerText = "ከፍል፦ ዝግጁ (CONCERT READY)";
             document.getElementById("lyricsContainer").innerHTML = "";
         }
 
         document.getElementById("playBtn").addEventListener("click", () => {
-            if
+            if (isPlaying) return;
+            isPlaying = true;
+
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContextClass();
+
+            let firstSection = songArrangement.timeline[0];
+            document.getElementById("sectionIndicator").innerText = `ከፍል፦ ${firstSection.toUpperCase()}`;
+            buildSyllableInterface(firstSection);
+
+            mainTimelineLoop = setInterval(processMasterTimelineTick, 100);
+        });
+
+        document.getElementById("stopBtn").addEventListener("click", () => {
+            shutdownStudioEngine();
+        });
+    </script>
+</body>
+</html>
