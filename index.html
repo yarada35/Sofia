@@ -3,174 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ — Pure Silent Presentation</title>
+    <title>የኢትዮጵያ 6/8 ወለባ አምልኮ መዝሙር (Full Master Web Engine)</title>
     <style>
-        body {
+        body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #09090b; 
-            color: #f4f4f5; 
+            background: #0c0c0e; 
+            color: #f5f5f7; 
             text-align: center; 
+            padding: 40px 20px; 
             margin: 0; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
         }
-        .player-container {
+        .container { 
             max-width: 850px; 
-            width: 92%;
-            background: #111115; 
-            padding: 50px 40px; 
-            border-radius: 28px;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.9); 
-            border: 1px solid #22222d;
+            margin: 0 auto; 
+            background: #16161a; 
+            padding: 40px 30px; 
+            border-radius: 24px; 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
+            border: 1px solid #2a2a35; 
         }
-        h1 {
-            font-size: 2.4rem; color: #ff9800; margin: 0 0 6px 0; font-weight: 700;
+        h1 { color: #ff9800; font-size: 2.2rem; margin: 0 0 8px 0; font-weight: 700; }
+        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin: 0 0 35px 0; }
+        .controls { margin-bottom: 30px; display: flex; justify-content: center; gap: 15px; }
+
+        .btn { 
+            background: #ff9800; border: none; padding: 15px 45px; 
+            font-size: 1.1rem; color: #000; font-weight: bold; cursor: pointer; 
+            border-radius: 30px; transition: all 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
-        h2 {
-            font-size: 1.05rem; color: #69697e; font-weight: normal; margin: 0 0 35px 0; letter-spacing: 0.5px;
-        }
-        .controls {
-            margin-bottom: 30px; display: flex; justify-content: center; gap: 20px;
-        }
-        .btn {
-            background: #ff9800; border: none; padding: 16px 48px; font-size: 1.1rem;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 35px;
-            transition: all 0.2s ease; box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3); 
-        }
-        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255, 152, 0, 0.5); }
-        .btn-stop { background: #22222a; color: #ff9800; border: 1px solid rgba(255,152,0,0.25); box-shadow: none; }
-        .btn-stop:hover { background: #31313d; color: #ffa726; }
+        .btn:hover { background: #ffa726; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4); }
+        .btn-stop { background: #22222b; color: #ff9800; border: 1px solid #3a3a4a; box-shadow: none; }
+        .btn-stop:hover { background: #2d2d3a; color: #ffa726; }
         
-        .timer-display {
-            font-family: monospace; font-size: 1.5rem; color: #00e5ff; margin-bottom: 35px;
-            background: #161622; display: inline-block; padding: 8px 26px; border-radius: 20px;
-            border: 1px solid rgba(0, 229, 255, 0.25); font-weight: bold;
+        .status-badge { 
+            background: #1a1a24; padding: 8px 24px; border-radius: 20px; 
+            font-size: 0.95rem; color: #00e676; display: inline-block; 
+            margin-bottom: 25px; border: 1px solid #2e7d32; font-family: monospace;
+        }
+        .section-title { 
+            font-size: 1.3rem; color: #00e5ff; margin-top: 20px; 
+            font-weight: bold; letter-spacing: 1px; text-transform: uppercase; 
         }
 
-        /* Presentation sliding window viewport */
-        .lyric-window {
-            height: 260px;
-            overflow: hidden;
-            position: relative;
-            margin-top: 20px;
-            border-top: 1px solid #22222d;
-            border-bottom: 1px solid #22222d;
-            padding: 20px 0;
+        .lyric-box { 
+            font-size: 2.3rem; margin: 25px 0; min-height: 140px; 
+            display: flex; flex-wrap: wrap; justify-content: center; 
+            align-content: center; gap: 14px; padding: 30px; 
+            background: #1a1a24; border-radius: 16px; border: 1px solid #23232f; 
+            line-height: 1.6;
         }
-        .lyric-scroller {
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(80px);
-        }
-        .lyric-line {
-            font-size: 1.75rem; color: #2e2e3a; padding: 22px 0; transition: all 0.5s ease;
-            line-height: 1.7; font-weight: 500; transform: scale(0.9); opacity: 0.2;
-        }
-        /* Active line glows and scales perfectly with ABSOLUTELY ZERO AUDIO */
-        .lyric-line.active-cinematic {
-            color: #ffffff;
-            font-weight: 700;
-            transform: scale(1.05);
-            opacity: 1;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 152, 0, 0.4);
+        .syllable { color: #4a4a5e; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: default; }
+        .active-syllable { 
+            color: #ff9800; font-weight: bold; 
+            text-shadow: 0 0 20px rgba(255,152,0,0.7), 0 0 5px #ff9800; 
+            transform: scale(1.12) translateY(-2px); 
         }
     </style>
 </head>
 <body>
-
-    <div class="player-container">
-        <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — የጽሑፍ ማሳያ ስሪት (እጅግ በጣም ጸጥተኛ)</h2>
+    <div class="container">
+        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
+        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴስታንት 6/8 ወለባ መዝሙር</h2>
         
         <div class="controls">
-            <button class="btn" id="startBtn">ጀምር (START TIMELINE)</button>
+            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
-
-        <div class="timer-display" id="timeClock">0:00</div>
-
-        <div class="lyric-window">
-            <div class="lyric-scroller" id="lyricScroller">
-                <div class="lyric-line" id="line-0">🎵 [ የሙዚቃ መግቢያ (INTRO) ]</div>
-                <div class="lyric-line" id="line-1">የሰበሰብኳቸው... በዙሪያዬ የነበሩ፤ በቀን መከራዬ... ፈጥነው ተበተኑ።</div>
-                <div class="lyric-line" id="line-2">ሰዉማ ምንድነው... ዛሬ እጅህን ነገ የሚጠፋ፤ በምድር ወዳጅ ላይ... የጣለው ልቤ ተስፋ።</div>
-                <div class="lyric-line" id="line-3">ማን ከወንድም አብልጦ... የሚጠጋኝ አለ፤ በሞት ጥላ መካከል... አብሮኝ የቆመ</div>
+        
+        <div class="status-badge" id="status">Engine Idle • 0:00</div>
+        <div class="section-title" id="sectionIndicator">ከፍል፦ ዝግጁ (READY)</div>
+        
+        <div class="lyric-box" id="lyricsContainer">
             </div>
-        </div>
     </div>
 
     <script>
-        let secondsElapsed = 0;
-        let clockInterval = null;
-        let isRunning = false;
+        let audioCtx = null;
+        let mainTimelineLoop = null;
+        let isPlaying = false;
+        let playbackTime = 0;
+        let currentSectionIdx = 0;
+        let currentSyllableIdx = 0;
+        let sectionTimeElapsed = 0;
 
-        // Visual alignment layout matrix offsets
-        const lineHeights = [80, 0, -85, -175];
+        // --- NATIVE SCALE FREQUENCY DICTIONARY (C-Major / Tizita Scale Mapping) ---
+        const PITCHES = {
+            'C2': 65.41,  'G2': 98.00,  'A2': 110.00, 'F2': 87.31,
+            'C3': 130.81, 'G3': 196.00, 'A3': 220.00, 'F3': 174.61,
+            'C4': 261.63, 'E4': 329.63, 'G4': 392.00, 'B4': 493.88, 'D4': 293.66, 'A4': 440.00, 'F4': 349.23,
+            'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'G5': 783.99, 'A5': 880.00
+        };
 
-        function pureVisualTick() {
-            if (!isRunning) return;
-            secondsElapsed++;
+        // --- FULL MASTER SONG METADATA ARRAYS ---
+        const songArrangement = {
+            bpm: 65,
+            timeline: ["intro", "verse1", "chorus", "verse2", "bridge", "chorus_rep", "outro"],
+            progressions: { 
+                intro: 'C', verse1: 'C', chorus: 'Am', verse2: 'C', bridge: 'F', chorus_rep: 'Am', outro: 'C' 
+            },
+            chords: {
+                'C':  { bass: ['C2','C3'], arp: ['C4','E4','G4','C5','G4','E4'], string: ['C4','G4'] },
+                'G':  { bass: ['G2','G3'], arp: ['G3','B4','D4','G4','D4','B4'], string: ['D4','G4'] },
+                'Am': { bass: ['A2','A3'], arp: ['A3','C4','E4','C5','E4','C4'], string: ['E4','A4'] },
+                'F':  { bass: ['F2','F3'], arp: ['F3','A4','C4','C5','C4','A4'], string: ['F4','C4'] }
+            },
+            lyrics: {
+                intro: [
+                    { syllable: "🎵 [ባህላዊ የትዝታ ዋሽንት እና የፒያኖ መግቢያ]", duration: 8.0, pitches: {} }
+                ],
+                verse1: [
+                    { syllable: "የ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ሰ", duration: 0.4, pitches: { lead: 'G4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { lead: 'A4' } },
+                    { syllable: "ሰብ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "ኳ", duration: 0.8, pitches: { lead: 'G4' } },
+                    { syllable: "ቸ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ው...", duration: 1.2, pitches: { lead: 'D4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { lead: 'D4' } },
+                    { syllable: "ዙ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ሪያ", duration: 0.8, pitches: { lead: 'G4' } },
+                    { syllable: "ዬ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { lead: 'G4' } },
+                    { syllable: "ነ", duration: 0.4, pitches: { lead: 'E4' } },
+                    { syllable: "በ", duration: 0.8, pitches: { lead: 'D4' } },
+                    { syllable: "ሩ፤", duration: 1.5, pitches: { lead: 'C4' } },
+                    { syllable: "በ", duration: 0.5, pitches: { lead: 'E4' } },
+                    { syllable: "ቀን", duration: 0.8, pitches: { lead: 'G4' } },
+                    { syllable: "መ", duration: 0.4, pitches: { lead: 'A4' } },
+                    { syllable: "ከ", duration: 0.4, pitches: { lead: 'C5' } },
+                    { syllable: "ራ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "ዬ...", duration: 1.2, pitches: { lead: 'G4' } },
+                    { syllable: "ፈት", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ነው", duration: 0.8, pitches: { lead: 'D4' } },
+                    { syllable: "ተ", duration: 0.4, pitches: { lead: 'D4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { lead: 'E4' } },
+                    { syllable: "ተ", duration: 0.8, pitches: { lead: 'D4' } },
+                    { syllable: "ኑ።", duration: 2.0, pitches: { lead: 'C4' } }
+                ],
+                chorus: [
+                    { syllable: "ማን", duration: 0.8, pitches: { lead: 'A4', alto: 'E4' } },
+                    { syllable: "ከ", duration: 0.4, pitches: { lead: 'C5', alto: 'G4' } },
+                    { syllable: "ወን", duration: 0.8, pitches: { lead: 'E5', alto: 'C5' } },
+                    { syllable: "ድም", duration: 0.8, pitches: { lead: 'D5', alto: 'B4' } },
+                    { syllable: "አብ", duration: 0.8, pitches: { lead: 'C5', alto: 'A4' } },
+                    { syllable: "ል", duration: 0.4, pitches: { lead: 'A4', alto: 'E4' } },
+                    { syllable: "ጦ...", duration: 1.2, pitches: { lead: 'G4', alto: 'D4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { lead: 'G4' } },
+                    { syllable: "ሚ", duration: 0.6, pitches: { lead: 'A4' } },
+                    { syllable: "ጠ", duration: 0.6, pitches: { lead: 'C5' } },
+                    { syllable: "ጋኝ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "አ", duration: 1.0, pitches: { lead: 'G4' } },
+                    { syllable: "ለ፤", duration: 1.5, pitches: { lead: 'E4' } },
+                    { syllable: "በ", duration: 0.5, pitches: { lead: 'G4' } },
+                    { syllable: "ሞት", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "ጥ", duration: 0.4, pitches: { lead: 'C5' } },
+                    { syllable: "ላ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "መ", duration: 0.4, pitches: { lead: 'G4' } },
+                    { syllable: "ካ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ከል...", duration: 1.2, pitches: { lead: 'D4' } },
+                    { syllable: "አብ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "ሮኝ", duration: 0.8, pitches: { lead: 'G4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { lead: 'D4' } },
+                    { syllable: "ቆ", duration: 0.8, pitches: { lead: 'E4' } },
+                    { syllable: "መ።", duration: 2.5, pitches: { lead: 'C4' } }
+                ],
+                verse2: [
+                    { syllable: "ወ", duration: 0.6, pitches: { lead: 'E4' } },
+                    { syllable: "ዳጅ", duration: 0.6, pitches: { lead: 'G4' } },
+                    { syllable: "ነኝ", duration: 0.6, pitches: { lead: 'A4' } },
+                    { syllable: "ባ", duration: 0.8, pitches: { lead: 'A4' } },
+                    { syllable: "ዮች...", duration: 1.2, pitches: { lead: 'G4' } },
+                    { syllable: "በ", duration: 0.4, pitches: { lead: 'E4' } },
+                    { syllable: "ደ", duration: 0.6, pitches: { lead: 'D4' } },
+                    { syllable: "ስ", duration: 0.6, pitches: { lead: 'E4' } },
+                    { syllable: "ታ", duration: 0.6, pitches: { lead: 'G4' } },
+                    { syllable: "ዬ", duration: 0.6, pitches: { lead: 'A4' } },
+                    { syllable: "ቀን", duration: 0.8, pitches: { lead: 'G4' } },
+                    { syllable: "የ", duration: 0.4, pitches: { lead: 'E4' } },
+                    { syllable: "ሳ", duration: 0.8, pitches: { lead: 'D4' } },
+                    { syllable: "ቁ፤", duration: 1.5, pitches: { lead: 'C4' } }
+                ],
+                bridge: [
+                    { syllable: "አይ", duration: 0.5, pitches: { lead: 'A4' } },
+                    { syllable: "ለ", duration: 0.5, pitches: { lead: 'C5' } },
+                    { syllable: "ወጥ", duration: 0.5, pitches: { lead: 'D5' } },
+                    { syllable: "ም", duration: 0.5, pitches: { lead: 'E5' } },
+                    { syllable: "ፍ", duration: 0.5, pitches: { lead: 'D5' } },
+                    { syllable: "ቅ", duration: 0.5, pitches: { lead: 'C5' } },
+                    { syllable: "ሩ...", duration: 1.5, pitches: { lead: 'A4' } },
+                    { syllable: "አይ", duration: 0.5, pitches: { lead: 'G4' } },
+                    { syllable: "ለቅ", duration: 0.5, pitches: { lead: 'A4' } },
+                    { syllable: "ም", duration: 0.5, pitches: { lead: 'C5' } },
+                    { syllable: "እ", duration: 0.5, pitches: { lead: 'A4' } },
+                    { syllable: "ጄ", duration: 0.5, pitches: { lead: 'G4' } },
+                    { syllable: "ን!", duration: 1.5, pitches: { lead: 'E4' } }
+                ],
+                chorus_rep: [
+                    { syllable: "[ድግግሞሽ አዝማች — ባለ 3 ድምፅ ሙሉ ኳየር]", duration: 12.0, pitches: {} }
+                ],
+                outro: [
+                    { syllable: "🎵 [የማሳረጊያ ጸጥታ... ዋሽንት ቀስ እያለ ይጠፋል]", duration: 8.0, pitches: {} }
+                ]
+            }
+        };
 
-            // 1. Update visual clock counter layout
-            let mins = Math.floor(secondsElapsed / 60);
-            let secs = secondsElapsed % 60;
-            document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        function playSynthVoice(freq, startTime, duration, type = "sine", vol = 0.15) {
+            if (!freq || !audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gainNode = audioCtx.createGain();
+            let filter = audioCtx.createBiquadFilter();
 
-            // 2. Map current visual milestone frames cleanly
-            let activeIdx = 0;
-            if (secondsElapsed >= 6) activeIdx = 1;
-            if (secondsElapsed >= 16) activeIdx = 2;
-            if (secondsElapsed >= 26) activeIdx = 3;
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, startTime);
 
-            // 3. Slide the lyric engine block upwards perfectly
-            const scroller = document.getElementById("lyricScroller");
-            scroller.style.transform = `translateY(${lineHeights[activeIdx]}px)`;
+            filter.type = "lowpass";
+            filter.frequency.setValueAtTime(type === "triangle" ? 300 : 1200, startTime);
 
-            // 4. Repaint glowing active presentation highlight classes
-            for (let i = 0; i < 4; i++) {
-                let el = document.getElementById(`line-${i}`);
-                if (i === activeIdx) {
-                    el.classList.add("active-cinematic");
-                } else {
-                    el.classList.remove("active-cinematic");
+            // Soft-attack piano and string envelopes to emulate instrument layers
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(vol, startTime + 0.03);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+            osc.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        function triggerInstrumentalBackdrop(progKey) {
+            if (!audioCtx || !songArrangement.chords[progKey]) return;
+            let now = audioCtx.currentTime;
+            let chord = songArrangement.chords[progKey];
+
+            // 1. Deep 6/8 Bowed Orchestral Bass Strings
+            chord.bass.forEach(p => {
+                if(PITCHES[p]) playSynthVoice(PITCHES[p], now, 3.5, "triangle", 0.04);
+            });
+
+            // 2. Linear Piano Arpeggio Array Movement
+            chord.arp.forEach((p, index) => {
+                let noteTime = now + (index * 0.35);
+                if(PITCHES[p]) playSynthVoice(PITCHES[p], noteTime, 0.6, "sine", 0.08);
+            });
+
+            // 3. Ambient Shaker Accent (Traditional 6/8 Rhythm Emulation)
+            for (let i = 0; i < 6; i++) {
+                let hitTime = now + (i * 0.4);
+                playSynthVoice(800, hitTime, 0.03, "triangle", i % 3 == 0 ? 0.015 : 0.005);
+            }
+        }
+
+        function buildSyllableInterface(sectionKey) {
+            const container = document.getElementById("lyricsContainer");
+            container.innerHTML = "";
+            let lyricsArray = songArrangement.lyrics[sectionKey];
+
+            lyricsArray.forEach((item, index) => {
+                let span = document.createElement("span");
+                span.className = "syllable";
+                span.id = `syl-${index}`;
+                span.innerText = item.syllable;
+                container.appendChild(span);
+            });
+        }
+
+        function processMasterTimelineTick() {
+            if (!isPlaying) return;
+
+            playbackTime += 0.1;
+            sectionTimeElapsed += 0.1;
+
+            // 1. Manage Global Timer Displays
+            let mins = Math.floor(playbackTime / 60);
+            let secs = Math.floor(playbackTime % 60);
+            document.getElementById("status").innerText = `ድምፅ በማጫወት ላይ • ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+            let sectionKey = songArrangement.timeline[currentSectionIdx];
+            let currentProgression = songArrangement.progressions[sectionKey];
+
+            // 2. Loop Backdrops on Bar Modulo Thresholds (Every 3.5 seconds)
+            if (Math.abs(sectionTimeElapsed - 0.1) < 0.01 || Math.floor(sectionTimeElapsed * 10) % 35 === 0) {
+                triggerInstrumentalBackdrop(currentProgression);
+            }
+
+            // 3. Scan Syllable Progressions Natively
+            let syllables = songArrangement.lyrics[sectionKey];
+            let timeAccumulator = 0;
+            let targetSyllableIdx = -1;
+
+            for (let i = 0; i < syllables.length; i++) {
+                let start = timeAccumulator;
+                let end = timeAccumulator + syllables[i].duration;
+                if (sectionTimeElapsed >= start && sectionTimeElapsed < end) {
+                    targetSyllableIdx = i;
+                    break;
+                }
+                timeAccumulator += syllables[i].duration;
+            }
+
+            // Handle Syllable Highlights and Audio Voicing Changes
+            if (targetSyllableIdx !== -1 && targetSyllableIdx !== currentSyllableIdx) {
+                // Clear old active styles
+                let oldEl = document.getElementById(`syl-${currentSyllableIdx}`);
+                if (oldEl) oldEl.classList.remove("active-syllable");
+
+                currentSyllableIdx = targetSyllableIdx;
+                let newEl = document.getElementById(`syl-${currentSyllableIdx}`);
+                if (newEl) newEl.classList.add("active-syllable");
+
+                // Execute Pitch voicings dynamically from metadata dictionaries
+                let pitches = syllables[currentSyllableIdx].pitches;
+                let now = audioCtx.currentTime;
+                if (pitches.lead && PITCHES[pitches.lead]) {
+                    // Lead Solo Melodic Voice Line
+                    playSynthVoice(PITCHES[pitches.lead], now, syllables[currentSyllableIdx].duration * 0.8, "sine", 0.18);
+                    
+                    // Washint Woodwind Breath Overtone Layer
+                    playSynthVoice(PITCHES[pitches.lead] * 1.5, now, 0.2, "sine", 0.02);
+                }
+                if (pitches.alto && PITCHES[pitches.alto]) {
+                    // Harmonized Vocal Layer Accent Block
+                    playSynthVoice(PITCHES[pitches.alto], now + 0.02, syllables[currentSyllableIdx].duration * 0.8, "sine", 0.08);
                 }
             }
 
-            // End performance track cycle safely at milestone limits
-            if (secondsElapsed >= 38) {
-                killVisualEngine();
+            // 4. Section Boundaries Checker
+            if (sectionTimeElapsed >= timeAccumulator) {
+                currentSectionIdx++;
+                sectionTimeElapsed = 0;
+                currentSyllableIdx = -1;
+
+                if (currentSectionIdx < songArrangement.timeline.length) {
+                    let nextSection = songArrangement.timeline[currentSectionIdx];
+                    document.getElementById("sectionIndicator").innerText = `ከፍል፦ ${nextSection.toUpperCase()}`;
+                    buildSyllableInterface(nextSection);
+                } else {
+                    shutdownStudioEngine();
+                }
             }
         }
 
-        function killVisualEngine() {
-            isRunning = false;
-            clearInterval(clockInterval);
-            secondsElapsed = 0;
+        function shutdownStudioEngine() {
+            isPlaying = false;
+            clearInterval(mainTimelineLoop);
+            playbackTime = 0;
+            currentSectionIdx = 0;
+            currentSyllableIdx = -1;
+            sectionTimeElapsed = 0;
 
-            document.getElementById("timeClock").innerText = "0:00";
-            document.getElementById("lyricScroller").style.transform = "translateY(80px)";
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`line-${i}`).classList.remove("active-cinematic");
+            if (audioCtx) {
+                try { audioCtx.close(); } catch(e){}
+                audioCtx = null;
             }
+
+            document.getElementById("status").innerText = "Engine Idle • 0:00";
+            document.getElementById("sectionIndicator").innerText = "ከፍል፦ ዝግጁ (READY)";
+            document.getElementById("lyricsContainer").innerHTML = "";
         }
 
-        document.getElementById("startBtn").addEventListener("click", () => {
-            if (isRunning) return;
-            isRunning = true;
-
-            // Kick off visual changes instantly on user click event action
-            document.getElementById("line-0").classList.add("active-cinematic");
-            document.getElementById("lyricScroller").style.transform = `translateY(${lineHeights[0]}px)`;
-
-            // Run pure visual loops with zero audio context creation
-            clockInterval = setInterval(pureVisualTick, 1000);
-        });
-
-        document.getElementById("stopBtn").addEventListener("click", () => {
-            killVisualEngine();
-        });
-    </script>
-</body>
-</html>
+        document.getElementById("playBtn").addEventListener("click", () => {
+            if
