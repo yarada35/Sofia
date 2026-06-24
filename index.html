@@ -3,211 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ከወንድም በላይ</title>
+    <title>ከወንድም በላይ (ታማኝ ወዳጅ) - Cinematic Player</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #0c0c0e; 
+            background: #0a0a0c; 
             color: #f5f5f7; 
             text-align: center; 
-            padding: 40px 20px;
             margin: 0; 
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 90vh;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .container {
-            max-width: 850px; 
-            width: 100%;
-            background: #16161a; 
-            padding: 30px; 
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
-            border: 1px solid #2a2a35; 
+        .player-container {
+            max-width: 700px; 
+            width: 90%;
+            background: #111115; 
+            padding: 50px 40px; 
+            border-radius: 28px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8); 
+            border: 1px solid #22222b; 
+            position: relative;
         }
-        h1 { color: #ff9800; font-size: 2rem; margin-bottom: 5px; }
-        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin-bottom: 25px; }
-        
+        .glow-orb {
+            position: absolute;
+            top: -50px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(255, 152, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0; pointer-events: none;
+        }
+        h1 {
+            font-size: 2.4rem; color: #ff9800; margin: 0 0 5px 0; position: relative; z-index: 1;
+        }
+        h2 {
+            font-size: 1.1rem; color: #717184; font-weight: normal; margin: 0 0 35px 0; position: relative; z-index: 1;
+        }
         .controls {
-            margin-bottom: 20px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
+            margin-bottom: 45px; display: flex; justify-content: center; gap: 20px; position: relative; z-index: 1;
         }
         .btn {
-            background: #ff9800; border: none; padding: 14px 35px; font-size: 1.1rem;
+            background: #ff9800; border: none; padding: 15px 45px; font-size: 1.1rem;
             color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
-            transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 20px rgba(255, 152, 0, 0.25); 
         }
-        .btn:hover { background: #ffa726; transform: translateY(-2px); }
-        .btn-stop { background: #3a3a4a; color: #fff; }
+        .btn:hover { background: #ffa726; transform: translateY(-3px); box-shadow: 0 6px 25px rgba(255, 152, 0, 0.4); }
+        .btn-stop { background: #252530; color: #ff9800; border: 1px solid rgba(255,152,0,0.2); box-shadow: none; }
+        .btn-stop:hover { background: #323242; color: #ffa726; }
         
-        .time-display {
-            font-family: monospace; font-size: 1.2rem; color: #00e5ff;
-            margin-bottom: 20px; background: #22222b; display: inline-block;
-            padding: 6px 16px; border-radius: 20px; border: 1px solid #1a8a9d;
+        .timer-display {
+            font-family: monospace; font-size: 1.2rem; color: #00e5ff; margin-bottom: 30px;
+            background: #181822; display: inline-block; padding: 6px 18px; border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
         }
 
-        .helper-box {
-            background: #1c1c24; border: 1px dashed #ff9800; padding: 12px;
-            border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; color: #ffa726;
+        .lyrics-container {
+            display: flex; flex-direction: column; gap: 32px; position: relative; z-index: 1;
         }
-
-        .lyric-box {
-            margin: 20px 0; display: flex; flex-direction: column; gap: 15px; text-align: left;
+        .lyric-line {
+            font-size: 1.75rem; color: #353545; transition: all 0.5s ease; line-height: 1.7; font-weight: 400;
         }
-        
-        /* Row Layout */
-        .lyric-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 18px; background: #1a1a24; border-radius: 10px;
-            border: 1px solid #23232f; transition: all 0.25s ease;
-        }
-        .verse-text {
-            font-size: 1.5rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
-        }
-        
-        /* Timing stamp capture tool button style */
-        .sync-stamp-btn {
-            background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
-            padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; cursor: pointer;
-            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 140px;
-        }
-        .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
-
-        /* Playing highlight visual layout style rules */
-        .active-row { 
-            background: #251f15 !important; border: 1px solid #ff9800 !important;
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.15);
-        }
-        .active-row .verse-text { 
-            color: #ff9800 !important; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.4);
+        /* Style when the generative cinematic voice reaches the timestamp */
+        .active-cinematic {
+            color: #ffffff;
+            font-weight: bold;
+            transform: scale(1.03);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 152, 0, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
-        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴستانት መዝሙር ማጫወቻ</h2>
+    <div class="player-container">
+        <div class="glow-orb"></div>
+        <h1>ከወንድም በላይ (ታማኝ ወዳጅ)</h1>
+        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር — ሉዓላዊ ሲኒማቲክ ስሪት</h2>
         
         <div class="controls">
-            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
+            <button class="btn" id="startBtn">አጫውት (PLAY CINEMATIC)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
-        
-        <div class="time-display" id="trackTimer">የሙዚቃው ሰዓት፦ 0:00</div>
-        
-        <div class="helper-box">
-            💡 <strong>እንዴት እንደሚያስተካክሉ፦</strong> ሙዚቃውን ያስነሱት። ድምፃዊው እያንዳንዱን ስንኝ መዘመር ሲጀምር፣ ከስንኙ ጎን ያለውን ሰማያዊ <strong>[⏱️ ሰዓት መዝግብ]</strong> ቁልፍ ይጫኑት። ድረ-ገጹ ሰዓቱን በራሱ ያስተካክላል!
+
+        <div class="timer-display" id="timeClock">0:00</div>
+
+        <div class="lyrics-container">
+            <div class="lyric-line" id="line-0">🎵 [ የሙዚቃ መግቢያ (INTRO) ]</div>
+            <div class="lyric-line" id="line-1">የሰበሰብኳቸው... በዙሪያዬ የነበሩ፤ በቀን መከራዬ... ፈጥነው ተበተኑ።</div>
+            <div class="lyric-line" id="line-2">ሰዉማ ምንድነው... ዛሬ እጅህን ነገ የሚጠፋ፤ በምድር ወዳጅ ላይ... የጣለው ልቤ ተስፋ።</div>
+            <div class="lyric-line" id="line-3">ማን ከወንድም አብልጦ... የሚጠጋኝ አለ፤ በሞት ጥላ መካከል... አብሮኝ የቆመ</div>
         </div>
-        
-        <div class="lyric-box" id="lyricsContainer"></div>
     </div>
 
     <script>
-        const audio = new Audio("mezmur.mp3");
-        let isPlaying = false;
+        let audioCtx = null;
+        let oscillators = [];
+        let biquadFilter = null;
+        let masterGain = null;
+        let startTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let spokenLines = new Set();
 
-        // Default layout items. If custom items exist in storage memory, use them instead
-        const defaultTimeline = [
-            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (INTRO) ]" },
-            { id: 1, time: 6.0, text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤ በቀን መከራዬ… ፈጥነው ተበተኑ።" },
-            { id: 2, time: 16.0, text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤ በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
-            { id: 3, time: 26.0, text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤ በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
-            { id: 4, time: 36.0, text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤ ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
-            { id: 5, time: 48.0, text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤ ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
-            { id: 6, time: 58.0, text: "የማይለወጠው… የታመነው የኔ ጌታ፤ የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
-            { id: 7, time: 70.0, text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤ እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
-            { id: 8, time: 80.0, text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." }
+        // Exact timeline parameters extracted directly from image_be7bfa.png
+        const timeline = [
+            { id: 0, time: 0, text: "" },
+            { id: 1, time: 6, text: "የሰበሰብኳቸው በዙሪያዬ የነበሩ በቀን መከራዬ ፈጥነው ተበተኑ" },
+            { id: 2, time: 16, text: "ሰዉማ ምንድነው ዛሬ እጅህን ነገ የሚጠፋ በምድር ወዳጅ ላይ የጣለው ልቤ ተስፋ" },
+            { id: 3, time: 26, text: "ማን ከወንድም አብልጦ የሚጠጋኝ አለ በሞት ጥላ መካከል አብሮኝ የቆመ" }
         ];
 
-        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline")) || defaultTimeline;
-
-        const lyricsContainer = document.getElementById("lyricsContainer");
-        const trackTimer = document.getElementById("trackTimer");
-
-        function formatTime(seconds) {
-            let m = Math.floor(seconds / 60);
-            let s = Math.floor(seconds % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        // Render rows dynamically
-        function renderInterface() {
-            lyricsContainer.innerHTML = "";
-            lyricTimeline.sort((a, b) => a.time - b.time);
+        function initCinematicEngine() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            lyricTimeline.forEach((item) => {
-                const row = document.createElement("div");
-                row.className = "lyric-row";
-                row.id = `row-${item.id}`;
-                
-                const txtDiv = document.createElement("div");
-                txtDiv.className = "verse-text";
-                txtDiv.innerHTML = item.text;
-                
-                // Clicking a lyric jumps directly to its currently saved timestamp
-                txtDiv.addEventListener("click", () => {
-                    audio.currentTime = item.time;
-                    if (!isPlaying) playSong();
-                });
+            masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 3); 
 
-                // The magical calibration sync capture tool button
-                const btn = document.createElement("button");
-                btn.className = "sync-stamp-btn";
-                btn.innerText = `⏱️ ሰዓት መዝግብ (${formatTime(item.time)})`;
-                
-                btn.addEventListener("click", (e) => {
-                    e.stopPropagation(); // Stop row click trigger
-                    item.time = audio.currentTime; // Capture current runtime value directly
-                    localStorage.setItem("sofia_timeline", JSON.stringify(lyricTimeline)); // Save to memory cache
-                    renderInterface(); // Refresh UI layout positions instantly
-                });
+            biquadFilter = audioCtx.createBiquadFilter();
+            biquadFilter.type = "lowpass";
+            biquadFilter.Q.value = 1;
+            biquadFilter.frequency.setValueAtTime(250, audioCtx.currentTime);
+            biquadFilter.frequency.linearRampToValueAtTime(450, audioCtx.currentTime + 10);
 
-                row.appendChild(txtDiv);
-                row.appendChild(btn);
-                lyricsContainer.appendChild(row);
+            // Generates a rich, resonant open-fifth cinematic minor cluster chord drone
+            const frequencies = [73.42, 110.00, 146.83, 220.00, 293.66, 329.63]; 
+            
+            frequencies.forEach((freq, index) => {
+                let osc = audioCtx.createOscillator();
+                let oscGain = audioCtx.createGain();
+                
+                // Mix saw and triangle waveforms for a smooth cinematic string effect
+                osc.type = index % 2 === 0 ? "sawtooth" : "triangle";
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                
+                // Subtle detuning to make the acoustic field sound massive
+                osc.detune.setValueAtTime((Math.random() * 8) - 4, audioCtx.currentTime);
+                
+                oscGain.gain.setValueAtTime(0.08 / frequencies.length, audioCtx.currentTime);
+                
+                osc.connect(oscGain);
+                oscGain.connect(biquadFilter);
+                oscillators.push(osc);
+                osc.start();
             });
+
+            biquadFilter.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
         }
 
-        // Monitors song progression to move the highlighter row by row
-        audio.addEventListener("timeupdate", () => {
-            const currentTime = audio.currentTime;
-            trackTimer.innerText = `የሙዚቃው ሰዓት፦ ${formatTime(currentTime)}`;
+        function speakVocalLine(text) {
+            if (!text) return;
+            window.speechSynthesis.cancel(); // Clears overlapping vocal stacks
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Auto-detect system voice profile targeting smooth low-mid tones
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith("am") || v.name.includes("Google") || v.lang.startsWith("en"));
+            
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 0.82;  // Slow, measured tempo for dramatic, cinematic clarity
+            utterance.pitch = 0.90; // Deepened pitch structure for professional weight
+            
+            window.speechSynthesis.speak(utterance);
+        }
 
-            let activeId = -1;
-            for (let i = 0; i < lyricTimeline.length; i++) {
-                if (currentTime >= lyricTimeline[i].time) {
-                    activeId = lyricTimeline[i].id;
+        function updateLoop() {
+            if (!isRunning) return;
+            const elapsed = Math.floor((audioCtx.currentTime - startTime));
+            
+            // Format timer clock display
+            let mins = Math.floor(elapsed / 60);
+            let secs = elapsed % 60;
+            document.getElementById("timeClock").innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+            // Evaluate current timestamp targets
+            let activeIdx = 0;
+            timeline.forEach((item) => {
+                if (elapsed >= item.time) {
+                    activeIdx = item.id;
+                    if (!spokenLines.has(item.id) && item.text !== "") {
+                        spokenLines.add(item.id);
+                        speakVocalLine(item.text);
+                    }
+                }
+            });
+
+            // Update visual active line states
+            for (let i = 0; i < 4; i++) {
+                const el = document.getElementById(`line-${i}`);
+                if (i === activeIdx) {
+                    el.classList.add("active-cinematic");
+                } else {
+                    el.classList.remove("active-cinematic");
                 }
             }
 
-            document.querySelectorAll(".lyric-row").forEach(el => {
-                if (el.id === `row-${activeId}`) {
-                    el.classList.add("active-row");
-                } else {
-                    el.classList.remove("active-row");
-                }
-            });
+            // Loop termination safety check at the end of the verse segment
+            if (elapsed >= 40) {
+                stopEngine();
+            }
+        }
+
+        function stopEngine() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            window.speechSynthesis.cancel();
+            
+            if (masterGain) {
+                try {
+                    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+                    setTimeout(() => {
+                        if (audioCtx) {
+                            oscillators.forEach(osc => { try { osc.stop(); } catch(e){} });
+                            audioCtx.close();
+                        }
+                    }, 1600);
+                } catch(e) {}
+            }
+            
+            document.getElementById("timeClock").innerText = "0:00";
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`line-${i}`).classList.remove("active-cinematic");
+            }
+            spokenLines.clear();
+        }
+
+        document.getElementById("startBtn").addEventListener("click", () => {
+            if (isRunning) return;
+            isRunning = true;
+            spokenLines.clear();
+            initCinematicEngine();
+            startTime = audioCtx.currentTime;
+            timerInterval = setInterval(updateLoop, 250);
         });
 
-        function playSong() {
-            audio.play().then(() => { isPlaying = true; }).catch(err => {
-                trackTimer.innerText = "ስህተት፦ muzmur.mp3 ፋይል አልተገኘም";
-            });
+        document.getElementById("stopBtn").addEventListener("click", () => {
+            stopEngine();
+        });
+
+        // Pre-fetch browser speech engines early for seamless voice execution
+        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
         }
-
-        function stopSong() {
-            audio.pause(); audio.currentTime = 0; isPlaying = false;
-            document.querySelectorAll(".lyric-row").forEach(el => el.classList.remove("active-row"));
-        }
-
-        document.getElementById("playBtn").addEventListener("click", playSong);
-        document.getElementById("stopBtn").addEventListener("click", stopSong);
-
-        renderInterface();
     </script>
 </body>
 </html>
