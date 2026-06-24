@@ -3,161 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ይቅር ስላልከኝ ነው እኔ መቆሜ</title>
+    <title>ከወንድም በላይ</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background: #0c0c0e; 
             color: #f5f5f7; 
             text-align: center; 
+            padding: 40px 20px;
             margin: 0; 
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 90vh;
         }
-        .player-container {
-            max-width: 650px; 
-            width: 90%;
+        .container {
+            max-width: 850px; 
+            width: 100%;
             background: #16161a; 
-            padding: 50px 30px; 
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+            padding: 30px; 
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
             border: 1px solid #2a2a35; 
         }
-        .audio-visual {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: #ff9800;
-            display: inline-block;
-        }
-        h1 {
-            font-size: 2.2rem;
-            color: #ffffff;
-            margin: 0 0 10px 0;
-        }
-        h2 {
-            font-size: 1.1rem;
-            color: #8a8a9d;
-            font-weight: normal;
-            margin: 0 0 40px 0;
-        }
+        h1 { color: #ff9800; font-size: 2rem; margin-bottom: 5px; }
+        h2 { font-size: 1.1rem; color: #8a8a9d; font-weight: normal; margin-bottom: 25px; }
+        
         .controls {
-            margin-bottom: 45px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
+            margin-bottom: 20px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
         }
         .btn {
-            background: #ff9800; border: none; padding: 14px 45px; font-size: 1.15rem;
+            background: #ff9800; border: none; padding: 14px 35px; font-size: 1.1rem;
             color: #000; font-weight: bold; cursor: pointer; border-radius: 30px;
             transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); 
         }
         .btn:hover { background: #ffa726; transform: translateY(-2px); }
-        .btn-stop { background: #3a3a4a; color: #fff; box-shadow: none; }
-        .btn-stop:hover { background: #4e4e64; }
+        .btn-stop { background: #3a3a4a; color: #fff; }
         
-        .lyrics-container {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
+        .time-display {
+            font-family: monospace; font-size: 1.2rem; color: #00e5ff;
+            margin-bottom: 20px; background: #22222b; display: inline-block;
+            padding: 6px 16px; border-radius: 20px; border: 1px solid #1a8a9d;
         }
-        .lyric-line {
-            font-size: 1.9rem;
-            color: #3e3e4d;
-            transition: all 0.3s ease;
-            line-height: 1.6;
-            font-weight: 500;
+
+        .helper-box {
+            background: #1c1c24; border: 1px dashed #ff9800; padding: 12px;
+            border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; color: #ffa726;
         }
-        /* This active style triggers precisely at your custom timestamps */
-        .active-vocal {
-            color: #ff9800;
-            font-weight: bold;
-            transform: scale(1.04);
-            text-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
+
+        .lyric-box {
+            margin: 20px 0; display: flex; flex-direction: column; gap: 15px; text-align: left;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.08); }
+        
+        /* Row Layout */
+        .lyric-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px; background: #1a1a24; border-radius: 10px;
+            border: 1px solid #23232f; transition: all 0.25s ease;
+        }
+        .verse-text {
+            font-size: 1.5rem; color: #8a8a9d; line-height: 1.6; flex-grow: 1; cursor: pointer;
+        }
+        
+        /* Timing stamp capture tool button style */
+        .sync-stamp-btn {
+            background: #222230; color: #00e5ff; border: 1px solid #1a8a9d;
+            padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; cursor: pointer;
+            font-family: monospace; font-weight: bold; margin-left: 15px; min-width: 140px;
+        }
+        .sync-stamp-btn:hover { background: #00e5ff; color: #000; }
+
+        /* Playing highlight visual layout style rules */
+        .active-row { 
+            background: #251f15 !important; border: 1px solid #ff9800 !important;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.15);
+        }
+        .active-row .verse-text { 
+            color: #ff9800 !important; font-weight: bold; text-shadow: 0 0 10px rgba(255,152,0,0.4);
         }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
-        <div class="audio-visual" id="vocalIcon">🎵</div>
-        <h1>ይቅር ስላልከኝ ነው እኔ መቆሜ</h1>
-        <h2>የኢትዮጵያ ፕሮቴስታንት መዝሙር</h2>
+    <div class="container">
+        <h1>ከወንድም በላይ (ታማኙ ወዳጅ)</h1>
+        <h2>ምሳሌ 18፥24 • የኢትዮጵያ ፕሮቴستانት መዝሙር ማጫወቻ</h2>
         
         <div class="controls">
-            <button class="btn" id="playBtn">አጫውት (PLAY)</button>
+            <button class="btn" id="playBtn">መዝሙሩን አጫውት (PLAY)</button>
             <button class="btn btn-stop" id="stopBtn">ቁም (STOP)</button>
         </div>
-
-        <div class="lyrics-container">
-            <div class="lyric-line" id="line-0">🎵 [ የሙዚቃ መግቢያ (Music Intro) ]</div>
-            <div class="lyric-line" id="line-1">ይቅር ስላልከኝ ነው እኔ መቆሜ</div>
-            <div class="lyric-line" id="line-2">ደግሞ እንዳልፈርድ እርዳኝ</div>
-            <div class="lyric-line" id="line-3">ደግሞ እንዳልፈርድ እርዳኝ</div>
-            <div class="lyric-line" id="line-4">በሰዎች ድካም</div>
+        
+        <div class="time-display" id="trackTimer">የሙዚቃው ሰዓት፦ 0:00</div>
+        
+        <div class="helper-box">
+            💡 <strong>እንዴት እንደሚያስተካክሉ፦</strong> ሙዚቃውን ያስነሱት። ድምፃዊው እያንዳንዱን ስንኝ መዘመር ሲጀምር፣ ከስንኙ ጎን ያለውን ሰማያዊ <strong>[⏱️ ሰዓት መዝግብ]</strong> ቁልፍ ይጫኑት። ድረ-ገጹ ሰዓቱን በራሱ ያስተካክላል!
         </div>
+        
+        <div class="lyric-box" id="lyricsContainer"></div>
     </div>
 
     <script>
         const audio = new Audio("mezmur.mp3");
-        const playBtn = document.getElementById("playBtn");
-        const stopBtn = document.getElementById("stopBtn");
-        const vocalIcon = document.getElementById("vocalIcon");
+        let isPlaying = false;
 
-        // Fixed timeline matching your exact stamps from image_89e9ed.png
-        const timeline = [
-            { time: 0, index: 0 },
-            { time: 4, index: 1 },
-            { time: 9, index: 2 },
-            { time: 14, index: 3 },
-            { time: 19, index: 4 }
+        // Default layout items. If custom items exist in storage memory, use them instead
+        const defaultTimeline = [
+            { id: 0, time: 0.0, text: "🎵 [ የሙዚቃ መግቢያ (INTRO) ]" },
+            { id: 1, time: 6.0, text: "የሰበሰብኳቸው… በዙሪያዬ የነበሩ፤ በቀን መከራዬ… ፈጥነው ተበተኑ።" },
+            { id: 2, time: 16.0, text: "ሰውማ ምንድነው… ዛሬ አጅቦ ነገ የሚጠፋ፤ በምድር ወዳጅ ላይ… የጣለው ልቤ ተስፋ።" },
+            { id: 3, time: 26.0, text: "ግን ከወንድም አብልጦ… የሚጠጋጋኝ አለ፤ በሞት ጥላ መካከል… አብሮኝ የቆመ ወዳጅ አለ!" },
+            { id: 4, time: 36.0, text: "እርሱማ ኢየሱስ ነው… በምንም የማይለየኝ፤ ሰው ሁሉ ሲተወኝ… ደረቱ ላይ ያቀፈኝ።" },
+            { id: 5, time: 48.0, text: "ወዳጅ ነኝ ባዮች… በደስታዬ ቀን የሳቁ፤ ሲጨልምብኝ ግን… ርቀውኝ የጠፉ።" },
+            { id: 6, time: 58.0, text: "የማይለወጠው… የታመነው የኔ ጌታ፤ የልቤ መጠጊያ… ሆነኸኛል የነፍስ እረፍትና ደስታ።" },
+            { id: 7, time: 70.0, text: "አይለወጥም ፍቅሩ… አይለቅም እጄን፤ እስከ አለም ፍጻሜ… አያሳፍርም ልጄን!" },
+            { id: 8, time: 80.0, text: "ወዳጄ… የነፍሴ... ኢየሱስ… ህይወቴ..." }
         ];
 
-        playBtn.addEventListener("click", () => {
-            audio.play();
-            vocalIcon.style.animation = "pulse 0.8s infinite alternate";
-        });
+        let lyricTimeline = JSON.parse(localStorage.getItem("sofia_timeline")) || defaultTimeline;
 
-        stopBtn.addEventListener("click", () => {
-            audio.pause();
-            audio.currentTime = 0;
-            vocalIcon.style.animation = "none";
-            clearHighlights();
-        });
+        const lyricsContainer = document.getElementById("lyricsContainer");
+        const trackTimer = document.getElementById("trackTimer");
 
-        function clearHighlights() {
-            for (let i = 0; i < 5; i++) {
-                document.getElementById(`line-${i}`).classList.remove("active-vocal");
-            }
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60);
+            let s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
+        // Render rows dynamically
+        function renderInterface() {
+            lyricsContainer.innerHTML = "";
+            lyricTimeline.sort((a, b) => a.time - b.time);
+            
+            lyricTimeline.forEach((item) => {
+                const row = document.createElement("div");
+                row.className = "lyric-row";
+                row.id = `row-${item.id}`;
+                
+                const txtDiv = document.createElement("div");
+                txtDiv.className = "verse-text";
+                txtDiv.innerHTML = item.text;
+                
+                // Clicking a lyric jumps directly to its currently saved timestamp
+                txtDiv.addEventListener("click", () => {
+                    audio.currentTime = item.time;
+                    if (!isPlaying) playSong();
+                });
+
+                // The magical calibration sync capture tool button
+                const btn = document.createElement("button");
+                btn.className = "sync-stamp-btn";
+                btn.innerText = `⏱️ ሰዓት መዝግብ (${formatTime(item.time)})`;
+                
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Stop row click trigger
+                    item.time = audio.currentTime; // Capture current runtime value directly
+                    localStorage.setItem("sofia_timeline", JSON.stringify(lyricTimeline)); // Save to memory cache
+                    renderInterface(); // Refresh UI layout positions instantly
+                });
+
+                row.appendChild(txtDiv);
+                row.appendChild(btn);
+                lyricsContainer.appendChild(row);
+            });
+        }
+
+        // Monitors song progression to move the highlighter row by row
         audio.addEventListener("timeupdate", () => {
-            let currentIdx = 0;
-            for (let i = 0; i < timeline.length; i++) {
-                if (audio.currentTime >= timeline[i].time) {
-                    currentIdx = timeline[i].index;
+            const currentTime = audio.currentTime;
+            trackTimer.innerText = `የሙዚቃው ሰዓት፦ ${formatTime(currentTime)}`;
+
+            let activeId = -1;
+            for (let i = 0; i < lyricTimeline.length; i++) {
+                if (currentTime >= lyricTimeline[i].time) {
+                    activeId = lyricTimeline[i].id;
                 }
             }
 
-            for (let i = 0; i < 5; i++) {
-                const el = document.getElementById(`line-${i}`);
-                if (i === currentIdx && !audio.paused) {
-                    el.classList.add("active-vocal");
+            document.querySelectorAll(".lyric-row").forEach(el => {
+                if (el.id === `row-${activeId}`) {
+                    el.classList.add("active-row");
                 } else {
-                    el.classList.remove("active-vocal");
+                    el.classList.remove("active-row");
                 }
-            }
+            });
         });
 
-        audio.addEventListener("ended", () => {
-            vocalIcon.style.animation = "none";
-            clearHighlights();
-        });
+        function playSong() {
+            audio.play().then(() => { isPlaying = true; }).catch(err => {
+                trackTimer.innerText = "ስህተት፦ muzmur.mp3 ፋይል አልተገኘም";
+            });
+        }
+
+        function stopSong() {
+            audio.pause(); audio.currentTime = 0; isPlaying = false;
+            document.querySelectorAll(".lyric-row").forEach(el => el.classList.remove("active-row"));
+        }
+
+        document.getElementById("playBtn").addEventListener("click", playSong);
+        document.getElementById("stopBtn").addEventListener("click", stopSong);
+
+        renderInterface();
     </script>
 </body>
 </html>
